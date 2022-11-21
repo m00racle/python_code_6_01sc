@@ -86,4 +86,12 @@ class Test_designLab01Work(unittest.TestCase):
     # additional requirement for higher order polynomial but with zero coeffs
     def test_zero_coeff_for_polynomial(self):
         self.assertEqual(str(src.Polynomial([3,0,0,0,0])), "3.000 z**4", "zero coeff handler FAILED")
+
+    # TODO: another additional requirement to handle negative coefficient:
+    def test_poly_with_negative_coeffs(self):
+        self.assertEqual(str(src.Polynomial([-1,-2,-3])), "-1.000 z**2 -2.000 z -3.000", "__str__ Polynomial FAILED")
     
+    # TODO: create test for Polynomial multiplication for both internal and/or operator overloading:
+
+    # TODO: create test for root of Polynomial (using the qudratic root equation maybe?) 
+    # TODO: What abot more than quadratic root formula?
