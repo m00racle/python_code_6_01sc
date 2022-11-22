@@ -94,7 +94,16 @@ class Test_designLab01Work(unittest.TestCase):
     def test_poly_argument_for_added_poly(self):
         self.assertEqual((self.p1 + self.p2)(10), 1323.0, "__call__ FAILED")
     
-    # TODO: create test for Polynomial multiplication for both internal and/or operator overloading:
+    # : create test for Polynomial multiplication for both internal and/or operator overloading:
+    def test_poly_mul_function(self):
+        self.assertEqual(self.p1.mul(self.p1), "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+    
+    def test_poly_multiplication_overloading(self):
+        self.assertEqual(self.p1 * self.p1, "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+
+    def test_poly_multiply_and_add_overloading(self):
+        self.assertEqual(self.p1 * self.p2 + self.p1, "100.000 z**3 + 4001.000 z**2 + 702 z + 603.000", "mul and add function FAILED")
 
     # TODO: create test for root of Polynomial (using the qudratic root equation maybe?) 
+
     # TODO: What abot more than quadratic root formula?
