@@ -87,9 +87,12 @@ class Test_designLab01Work(unittest.TestCase):
     def test_zero_coeff_for_polynomial(self):
         self.assertEqual(str(src.Polynomial([3,0,0,0,0])), "3.000 z**4 ", "zero coeff handler FAILED")
 
-    # TODO: another additional requirement to handle negative coefficient:
+    # : another additional requirement to handle negative coefficient:
     def test_poly_with_negative_coeffs(self):
         self.assertEqual(str(src.Polynomial([-1,-2,-3])), "-1.000 z**2 -2.000 z -3.000", "__str__ Polynomial FAILED")
+
+    def test_poly_argument_for_added_poly(self):
+        self.assertEqual((self.p1 + self.p2)(10), 1323.0, "__call__ FAILED")
     
     # TODO: create test for Polynomial multiplication for both internal and/or operator overloading:
 
