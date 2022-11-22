@@ -85,7 +85,7 @@ class Test_designLab01Work(unittest.TestCase):
     
     # additional requirement for higher order polynomial but with zero coeffs
     def test_zero_coeff_for_polynomial(self):
-        self.assertEqual(str(src.Polynomial([3,0,0,0,0])), "3.000 z**4", "zero coeff handler FAILED")
+        self.assertEqual(str(src.Polynomial([3,0,0,0,0])), "3.000 z**4 ", "zero coeff handler FAILED")
 
     # TODO: another additional requirement to handle negative coefficient:
     def test_poly_with_negative_coeffs(self):
