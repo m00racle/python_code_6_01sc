@@ -6,6 +6,8 @@
 # Below are templates for your answers to three parts of Design Lab 1
 
 #-----------------------------------------------------------------------------
+import cmath
+# choose this if you wish to process complex number.
 
 def fib(n):
     # Delete the pass statement below and insert your own code
@@ -106,6 +108,18 @@ class Polynomial:
 
         new_list.reverse()
         return Polynomial(new_list)
+
+    def roots(self):
+        result = []
+        if self.order == 1:
+            return [-self.coeffs[1] / self.coeffs[0]]
+        elif self.order == 2:
+            a = self.coeffs[0]
+            b = self.coeffs[1]
+            c = self.coeffs[2]
+            return [(-b + cmath.sqrt(b**2 - 4*a*c))/(2*a), (-b - cmath.sqrt(b**2 - 4*a*c))/(2*a)]
+
+        raise ValueError("Order too high to solve for roots")
 
     def __add__(self, po):
         return self.add(po)

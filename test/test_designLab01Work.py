@@ -119,13 +119,13 @@ class Test_designLab01Work(unittest.TestCase):
 
     # : create test for root of Polynomial (using the qudratic root equation maybe?) 
     def test_poly_root_imaginary(self):
-        self.assertEqual(self.p1.roots(), [(-1+1.4142135623730947j), (-1-1.4142135623730947j)], "roots function FAILED")
+        self.assertEqual(self.p1.roots(), [(-1+1.4142135623730951j), (-1-1.4142135623730951j)], "roots function FAILED")
 
     def test_poly_root_single_float(self):
         self.assertEqual(self.p2.roots(), [-2.0], "roots function FAILED")
 
     def test_poly_root_complex_float(self):
-        self.assertEqual(src.Polynomial([3,2,-1]).roots(), [-1.0, 0.33333333333333331], "roots function FAILED")
+        self.assertEqual(src.Polynomial([3,2,-1]).roots(), [0.33333333333333331, -1.0], "roots function FAILED")
 
     # : What abot more than quadratic root formula?
     def test_root_for_order_higher_than_2_raise_value_error(self):
