@@ -23,6 +23,7 @@ class Test_designLab01Work(unittest.TestCase):
         self.b = src.V2(2.2, 3.3)
         self.p1 = src.Polynomial([1,2,3])
         self.p2 = src.Polynomial([100,200])
+        self.p3 = src.Polynomial([3,0,0,0,0])
 
     def test_fib_0_returns_0(self):
         self.assertEqual(src.fib(0), 0, "fib(0) FAILED to return 0")
@@ -85,7 +86,7 @@ class Test_designLab01Work(unittest.TestCase):
     
     # additional requirement for higher order polynomial but with zero coeffs
     def test_zero_coeff_for_polynomial(self):
-        self.assertEqual(str(src.Polynomial([3,0,0,0,0])), "3.000 z**4 ", "zero coeff handler FAILED")
+        self.assertEqual(str(self.p3), "3.000 z**4 ", "zero coeff handler FAILED")
 
     # : another additional requirement to handle negative coefficient:
     def test_poly_with_negative_coeffs(self):
@@ -97,6 +98,9 @@ class Test_designLab01Work(unittest.TestCase):
     # : create test for Polynomial multiplication for both internal and/or operator overloading:
     def test_poly_mul_function(self):
         self.assertEqual(self.p1.mul(self.p1), "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+
+    def test_single_poly_mul(self):
+        self.assertEqual(str(self.p3 * self.p1), "3.000 z**6 + 6 z**5 + 9 z**3", "mul function FAILED")
     
     def test_poly_multiplication_overloading(self):
         self.assertEqual(self.p1 * self.p1, "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
