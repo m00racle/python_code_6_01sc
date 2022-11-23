@@ -106,16 +106,13 @@ class Polynomial:
 
     def mul(self, p2):
         new_list = []
-        coeffs1 = list(reversed(self.coeffs))
-        coeffs2 = list(reversed(p2.getCoeffs()))
         # prepare the new list filled with all zero with length to occupy the new order after mul
         for i in range(self.order + p2.getOrder() + 1): new_list.append(0)
 
-        for j in range(len(coeffs1)):
-            for k in range(len(coeffs2)):
-                new_list[j + k] += coeffs1[j] * coeffs2[k]
-
-        new_list.reverse()
+        for j in range(len(self.coeffs)):
+            for k in range(len(p2.coeffs)):
+                new_list[j + k] += self.coeffs[j] * p2.coeffs[k]
+        
         return Polynomial(new_list)
 
     def roots(self):
