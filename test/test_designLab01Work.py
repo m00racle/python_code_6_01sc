@@ -104,6 +104,20 @@ class Test_designLab01Work(unittest.TestCase):
     def test_poly_multiply_and_add_overloading(self):
         self.assertEqual(self.p1 * self.p2 + self.p1, "100.000 z**3 + 4001.000 z**2 + 702 z + 603.000", "mul and add function FAILED")
 
-    # TODO: create test for root of Polynomial (using the qudratic root equation maybe?) 
+    # : create test for root of Polynomial (using the qudratic root equation maybe?) 
+    def test_poly_root_imaginary(self):
+        self.assertEqual(self.p1.roots(), [(-1+1.4142135623730947j), (-1-1.4142135623730947j)], "roots function FAILED")
 
-    # TODO: What abot more than quadratic root formula?
+    def test_poly_root_single_float(self):
+        self.assertEqual(self.p2.roots(), [-2.0], "roots function FAILED")
+
+    def test_poly_root_complex_float(self):
+        self.assertEqual(src.Polynomial([3,2,-1]).roots(), [-1.0, 0.33333333333333331], "roots function FAILED")
+
+    # : What abot more than quadratic root formula?
+    def test_root_for_order_higher_than_2_raise_value_error(self):
+        with self.assertRaises(ValueError) as e:
+            (self.p1 * self.p1).roots()
+
+        self.assertTrue("Order too high to solve for roots" in e.exception.args)
+    
