@@ -74,7 +74,7 @@ class Test_designLab01Work(unittest.TestCase):
         self.assertEqual(str(self.p3), "3.000 z**4 ", "zero coeff handler FAILED")
 
     def test_mid_zero_coeff_poly(self):
-        self.assertEqual(str(src.Polynomial([6,0,4,8,0])), "6.000 z**4 + 4.000 z**2 + 8 z ", "zero coeff handler FAILED")
+        self.assertEqual(str(src.Polynomial([6,0,4,8,0])), "6.000 z**4 + 4.000 z**2 + 8.000 z ", "zero coeff handler FAILED")
 
     def test_get_poly_rep(self):
         self.assertEqual(self.p3.getReps(), "3 0 0 0 0", "getReps function FAILED")

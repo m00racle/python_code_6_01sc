@@ -61,7 +61,9 @@ class Polynomial:
         text = ''
         order = self.order
         for coeff in self.coeffs:
-            if coeff == 0: continue
+            if coeff == 0: 
+                order -= 1
+                continue
             if order != self.order and coeff > 0 : text += '+ '
             if order > 1 : 
                 text += f'{float(coeff):.3f}' + ' z**' + str(order) + ' '
