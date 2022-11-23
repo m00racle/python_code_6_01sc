@@ -72,6 +72,13 @@ class Polynomial:
             
             order -= 1
         return text
+
+    def getReps(self) -> str:
+        result = ""
+        for i in range(len(self.coeffs)):
+            if i == 0 : result += str(self.coeffs[0])
+            else : result += (" " + str(self.coeffs[i]))
+        return result
     
     def getCoeffs(self) -> list:
         return self.coeffs

@@ -69,6 +69,9 @@ class Test_designLab01Work(unittest.TestCase):
     def test_print_polynomials(self):
         self.assertEqual(str(self.p1), "1.000 z**2 + 2.000 z + 3.000", "__str__ Polynomial FAILED")
 
+    def test_get_poly_rep(self):
+        self.assertEqual(self.p3.getReps(), "3 0 0 0 0", "getReps function FAILED")
+
     def test_get_coeffs(self):
         self.assertEqual(self.p1.getCoeffs(), [1, 2, 3], "getCoeffs function FAILED")
 
