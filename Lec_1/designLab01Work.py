@@ -71,6 +71,12 @@ class Polynomial:
             order -= 1
         return text
     
+    def getCoeffs(self) -> list:
+        return self.coeffs
+
+    def getOrder(self) -> int:
+        return self.order
+    
     def add(self, p2 ) :
         co_ex = []
         coeffs1 = self.coeffs.copy()
@@ -87,8 +93,25 @@ class Polynomial:
         if len(coeffs1) > 0 : return Polynomial(coeffs1 + co_ex)
         return Polynomial(coeffs2 + co_ex)
 
+    def mul(self, p2):
+        new_list = []
+        coeffs1 = list(reversed(self.coeffs))
+        coeffs2 = list(reversed(p2.getCoeffs()))
+        # prepare the new list filled with all zero with length to occupy the new order after mul
+        for i in range(self.order + p2.getOrder() + 1): new_list.append(0)
+
+        for j in range(len(coeffs1)):
+            for k in range(len(coeffs2)):
+                new_list[j + k] += coeffs1[j] * coeffs2[k]
+
+        new_list.reverse()
+        return Polynomial(new_list)
+
     def __add__(self, po):
         return self.add(po)
+
+    def __mul__(self, p2):
+        return self.mul(p2)
 
     def __call__(self, x) -> float:
         """  

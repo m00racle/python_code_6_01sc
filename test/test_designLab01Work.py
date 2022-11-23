@@ -68,6 +68,12 @@ class Test_designLab01Work(unittest.TestCase):
     # test class Polynomial
     def test_print_polynomials(self):
         self.assertEqual(str(self.p1), "1.000 z**2 + 2.000 z + 3.000", "__str__ Polynomial FAILED")
+
+    def test_get_coeffs(self):
+        self.assertEqual(self.p1.getCoeffs(), [1, 2, 3], "getCoeffs function FAILED")
+
+    def test_get_orde(self):
+        self.assertEqual(self.p3.getOrder(), 4, "getOrder function FAILED")
     
     def test_add_function_pass_other_poly_as_argument(self):
         self.assertEqual(str(self.p1.add(self.p2)), "1.000 z**2 + 102.000 z + 203.000", "add function Polynomial FAILED")
@@ -97,16 +103,19 @@ class Test_designLab01Work(unittest.TestCase):
     
     # : create test for Polynomial multiplication for both internal and/or operator overloading:
     def test_poly_mul_function(self):
-        self.assertEqual(self.p1.mul(self.p1), "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+        self.assertEqual(str(self.p1.mul(self.p1)), "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+    
+    def test_poly_mul_commutative(self):
+        self.assertEqual(str(self.p1.mul(self.p3)), str(self.p3.mul(self.p1)), "mul function FAILED")
 
     def test_single_poly_mul(self):
-        self.assertEqual(str(self.p3 * self.p1), "3.000 z**6 + 6 z**5 + 9 z**3", "mul function FAILED")
+        self.assertEqual(str(self.p3 * self.p1), "3.000 z**6 + 6.000 z**5 + 9.000 z**4 ", "mul function FAILED")
     
     def test_poly_multiplication_overloading(self):
-        self.assertEqual(self.p1 * self.p1, "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
+        self.assertEqual(str(self.p1 * self.p1), "1.000 z**4 + 4.000 z**3 + 10.000 z**2 + 12.000 z + 9.000", "mul FAILED")
 
     def test_poly_multiply_and_add_overloading(self):
-        self.assertEqual(self.p1 * self.p2 + self.p1, "100.000 z**3 + 4001.000 z**2 + 702 z + 603.000", "mul and add function FAILED")
+        self.assertEqual(str(self.p1 * self.p2 + self.p1), "100.000 z**3 + 401.000 z**2 + 702.000 z + 603.000", "mul and add function FAILED")
 
     # : create test for root of Polynomial (using the qudratic root equation maybe?) 
     def test_poly_root_imaginary(self):
