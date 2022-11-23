@@ -91,6 +91,9 @@ class Test_designLab01Work(unittest.TestCase):
     def test_add_function_longer_poly_as_argument(self):
         self.assertEqual(str(self.p2.add(self.p1)), "1.000 z**2 + 102.000 z + 203.000", "add function Polynomial FAILED")
 
+    def test_add_function_commutative_nature(self):
+        self.assertEqual(str(src.Polynomial([3,0,2,0]).add(src.Polynomial([2,0]))), str(src.Polynomial([2,0]).add(src.Polynomial([3,0,2,0]))), "add function FAILED")
+
     def test_pass_argument_to_polynomial(self):
         self.assertEqual(self.p1(1), 6.0, "__call__ FAILED")
 
