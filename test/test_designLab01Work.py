@@ -68,6 +68,13 @@ class Test_designLab01Work(unittest.TestCase):
     # test class Polynomial
     def test_print_polynomials(self):
         self.assertEqual(str(self.p1), "1.000 z**2 + 2.000 z + 3.000", "__str__ Polynomial FAILED")
+    
+    # additional requirement for higher order polynomial but with zero coeffs
+    def test_zero_coeff_for_polynomial(self):
+        self.assertEqual(str(self.p3), "3.000 z**4 ", "zero coeff handler FAILED")
+
+    def test_mid_zero_coeff_poly(self):
+        self.assertEqual(str(src.Polynomial([6,0,4,8,0])), "6.000 z**4 + 4.000 z**2 + 8 z ", "zero coeff handler FAILED")
 
     def test_get_poly_rep(self):
         self.assertEqual(self.p3.getReps(), "3 0 0 0 0", "getReps function FAILED")
@@ -93,10 +100,6 @@ class Test_designLab01Work(unittest.TestCase):
     def test_operator_overloading_addition(self):
         self.assertEqual(str(self.p1 + self.p2), "1.000 z**2 + 102.000 z + 203.000", "__add__ function Polynomial FAILED")
     
-    # additional requirement for higher order polynomial but with zero coeffs
-    def test_zero_coeff_for_polynomial(self):
-        self.assertEqual(str(self.p3), "3.000 z**4 ", "zero coeff handler FAILED")
-
     # : another additional requirement to handle negative coefficient:
     def test_poly_with_negative_coeffs(self):
         self.assertEqual(str(src.Polynomial([-1,-2,-3])), "-1.000 z**2 -2.000 z -3.000", "__str__ Polynomial FAILED")
