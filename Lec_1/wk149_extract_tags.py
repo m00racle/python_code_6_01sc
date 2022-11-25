@@ -27,15 +27,36 @@ def extractTags(inp : str) -> list:
     #     if pick : tagged += s
     
     # if pick : raise IndexError("invalid tag detected: no enclosure")
-    # TODO: use alternative algoithm str[:] to pass the same tests:
+
+    # : use alternative algoithm str[:] to pass the same tests:
     start = None
     end = None
     for i in range(len(inp)):
-        if inp[i] == '[' : start = i + 1
+        if inp[i] == '[' and start == None : start = i + 1
         if inp[i] == ']' :
+            if start == None : raise IndexError("invalid tag detected: no enclosure")
             end = i
             result.append(inp[start : end])
             start = None
             end = None
+    
+    if start != None or end != None : raise IndexError("invalid tag detected: no enclosure")
 
     return result
+
+def run():
+    # run the code above
+    try:
+        print(extractTags('test [the run [] in except] [cond]'))
+    except IndexError:
+        print("Index error happen")
+    except :
+        print("other error happen")
+    else:
+        print("Nothing happen")
+    finally:
+        print("run complete")
+        
+
+if __name__ == '__main__':
+    run()
