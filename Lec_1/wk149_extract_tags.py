@@ -12,21 +12,30 @@ def extractTags(inp : str) -> list:
     returns list of strings that was extracted from inp which tagged with []
     """
     result = []
-    pick = False
-    tagged = ''
-    for s in inp:
-        if s == '[' and not pick: 
-            pick = True
-            continue
-        if s == ']' :
-            if not pick : raise IndexError("invalid tag detected: no enclosure")
-            pick = False
-            result.append(tagged)
-            tagged = ''
+    # pick = False
+    # tagged = ''
+    # for s in inp:
+    #     if s == '[' and not pick: 
+    #         pick = True
+    #         continue
+    #     if s == ']' :
+    #         if not pick : raise IndexError("invalid tag detected: no enclosure")
+    #         pick = False
+    #         result.append(tagged)
+    #         tagged = ''
         
-        if pick : tagged += s
+    #     if pick : tagged += s
     
-    if pick : raise IndexError("invalid tag detected: no enclosure")
+    # if pick : raise IndexError("invalid tag detected: no enclosure")
     # TODO: use alternative algoithm str[:] to pass the same tests:
+    start = None
+    end = None
+    for i in range(len(inp)):
+        if inp[i] == '[' : start = i + 1
+        if inp[i] == ']' :
+            end = i
+            result.append(inp[start : end])
+            start = None
+            end = None
 
     return result
