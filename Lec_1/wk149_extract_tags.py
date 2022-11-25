@@ -18,11 +18,12 @@ def extractTags(inp : str) -> list:
         if s == '[' and not pick: 
             pick = True
             continue
-        if s == ']' and pick: 
-            # TODO: detect IndexError if the ] does not find the [
+        if s == ']' :
+            if not pick : raise IndexError("invalid tag detected: no enclosure")
             pick = False
             result.append(tagged)
             tagged = ''
+        
         if pick : tagged += s
     
     if pick : raise IndexError("invalid tag detected: no enclosure")
