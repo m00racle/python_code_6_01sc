@@ -1,0 +1,36 @@
+
+nona = Car()
+
+1. >>> nona.describeCar():
+A cool gray car
+
+2 >> nona.describeSelf () :
+A cool gray car
+
+3. >>> nona.color : 
+gray
+
+4. >>> lola = Car()
+   >>> lola.color = 'plaid'
+   >>> lola.describeCar() : 
+A cool gray car
+
+5. >>> lola.describeSelf() :
+A cool plaid car
+
+6. >>> lola.color
+plaid
+
+7. >>> nona.describeSelf()
+A cool gray car
+
+8. >>> nona.size = 'small'            
+   >>> lola.size 
+AttributeError: 'Car' object has no attribute 'size'
+
+9. >>> Car.size = 'big'        
+   >>> lola.size 
+big
+
+10. >>> nona.size
+small
