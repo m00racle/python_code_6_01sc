@@ -48,10 +48,10 @@ def run():
     # run the code above
     try:
         print(extractTags('test [the run [] in except] [cond]'))
-    except IndexError:
-        print("Index error happen")
-    except :
-        print("other error happen")
+    except IndexError as e:
+        print(f"Index Error -> {e}")
+    except Exception as exc:
+        print(f"other error happen: {exc}")
     else:
         print("Nothing happen")
     finally:
