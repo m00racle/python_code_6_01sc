@@ -12,21 +12,51 @@ def extractTags(inp : str) -> list:
     returns list of strings that was extracted from inp which tagged with []
     """
     result = []
-    pick = False
-    tagged = ''
-    for s in inp:
-        if s == '[' and not pick: 
-            pick = True
-            continue
-        if s == ']' :
-            if not pick : raise IndexError("invalid tag detected: no enclosure")
-            pick = False
-            result.append(tagged)
-            tagged = ''
+    # pick = False
+    # tagged = ''
+    # for s in inp:
+    #     if s == '[' and not pick: 
+    #         pick = True
+    #         continue
+    #     if s == ']' :
+    #         if not pick : raise IndexError("invalid tag detected: no enclosure")
+    #         pick = False
+    #         result.append(tagged)
+    #         tagged = ''
         
-        if pick : tagged += s
+    #     if pick : tagged += s
     
-    if pick : raise IndexError("invalid tag detected: no enclosure")
-    # TODO: use alternative algoithm str[:] to pass the same tests:
+    # if pick : raise IndexError("invalid tag detected: no enclosure")
+
+    # : use alternative algoithm str[:] to pass the same tests:
+    start = None
+    end = None
+    for i in range(len(inp)):
+        if inp[i] == '[' and start == None : start = i + 1
+        if inp[i] == ']' :
+            if start == None : raise IndexError("invalid tag detected: no enclosure")
+            end = i
+            result.append(inp[start : end])
+            start = None
+            end = None
+    
+    if start != None or end != None : raise IndexError("invalid tag detected: no enclosure")
 
     return result
+
+def run():
+    # run the code above
+    try:
+        print(extractTags('test [the run [] in except] [cond]'))
+    except IndexError as e:
+        print(f"Index Error -> {e}")
+    except Exception as exc:
+        print(f"other error happen: {exc}")
+    else:
+        print("Nothing happen")
+    finally:
+        print("run complete")
+        
+
+if __name__ == '__main__':
+    run()
