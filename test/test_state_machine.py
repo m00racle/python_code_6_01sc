@@ -89,4 +89,37 @@ class TestAverage2Class(unittest.TestCase):
     
 class TestLanguageAcceptorClass(unittest.TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        self.abc = sm.ABC()
+        self.abc.start()
+    
+    def test_start_state_starts_from_zero(self):
+        self.assertEqual(self.abc.getState(), 0)
+
+    def test_transduce_all_same_input_reuturn_false_mostly_verbosely(self):
+        # set
+        capOut = io.StringIO()
+        sys.stdout = capOut
+        # action
+        result = self.abc.transduce(['a', 'a', 'a'], verbose = True)
+        sys.stdout = sys.__stdout__
+        printed = "Start state: 0\nIn: a Out: True Next State: 1\nIn: a Out: False Next State: 3\nIn: a Out: False Next State: 3\n"
+        # assert
+        self.assertEqual(result, [True, False, False], "outputs are wrong")
+        self.assertEqual(capOut.getvalue(), printed, "printed out WRONG")
+
+    def test_transduce_changing_input_returns_and_print_proper_outputs(self):
+        # set
+        capOut = io.StringIO()
+        sys.stdout = capOut
+        # action
+        result = self.abc.transduce(['a', 'b', 'c', 'a', 'c', 'a', 'b'], verbose = True)
+        sys.stdout = sys.__stdout__
+        printed = "Start state: 0\nIn: a Out: True Next State: 1\nIn: b Out: True Next State: 2\nIn: c Out: True Next State: 0\nIn: a Out: True Next State: 1\nIn: c Out: False Next State: 3\nIn: a Out: False Next State: 3\nIn: b Out: False Next State: 3\n"
+        # assert
+        self.assertEqual(result, [True, True, True, True, False, False, False], "outputs are wrong")
+        self.assertEqual(capOut.getvalue(), printed, "printed out WRONG")
+
+    def test_run_empty_inputs_return_false_and_state_3(self):
+        self.assertEqual(self.abc.run(3), [False, False, False], "outputs WRONG")
+        self.assertEqual(self.abc.getState(), 3, "Final state is wrong")
+        

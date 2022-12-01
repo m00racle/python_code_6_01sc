@@ -67,6 +67,7 @@ class SM:
         NOTE: this is PURE FUNCTION don't change self.state from this function
         """
         pass
+    
 
 
 class Accumulator(SM):
@@ -117,4 +118,32 @@ class Average2(SM):
             return (inp, (state + inp)/2)
         except TypeError:
             return (0, 0)
+    
+class ABC(SM):
+    """  
+    class Language Acceptor
+    S = {0, 1, 2, 3}
+    I = {a, b, c}
+    O = {True, False}
+    n(s,i):
+        if s == 0 and i == a : 1 
+        if s == 1 and i == b : 2
+        if s == 2 and i == c : 0
+        else : 3
+    
+    o(s,i):
+        if n(s,i) == 3 : False
+        else : True
+    """
+    def __init__(self) -> None:
+        super().__init__(0)
+
+    def getNextValues(self, state, inp) -> tuple:
+        try:
+            if state == 0 and inp == 'a' : return (1, True)
+            elif state == 1 and inp == 'b' : return (2, True)
+            elif state == 2 and inp == 'c' : return (0, True)
+            else : return (3, False)
+        except TypeError:
+            return (3, False)
     
