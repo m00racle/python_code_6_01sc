@@ -67,14 +67,15 @@ class SM:
         NOTE: this is PURE FUNCTION don't change self.state from this function
         """
         pass
-    
+    # TODO: make getNextValues to have default procedures
+    # TODO: make getNextState function to support the getNextValues
 
 
 class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
     """
-    
+    # TODO: consider change this to override getNextState
     def getNextValues(self, state, inp) -> tuple:
         """  
         PURE FUNCTION MUST NOT change self.state
@@ -93,7 +94,9 @@ class Gain(SM):
     o(s,i) = s * i
     startState : user determined
     """
-    
+    # TODO: the init needs to be overriden to include self.k = initVal 
+    # good chance to try add code after super.
+    # TODO: consider to change to getNextState
     def getNextValues(self, state, inp) -> tuple:
         try:
             return(state, inp * state)
