@@ -15,6 +15,9 @@ class SM:
     also defince getNextValues(self, state, inp) function
     NOTE: getNextValues is a pure function it will not change the value of self.state (that's the job of self.step function)
     """
+    def __init__(self, initVal = 0) -> None:
+        self.startState = initVal
+
     def start(self):
         self.state = self.startState
     
@@ -67,8 +70,6 @@ class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
     """
-    def __init__(self, initialValue = 0) -> None:
-        self.startState = initialValue
     
     def getNextValues(self, state, inp) -> tuple:
         """  
@@ -82,9 +83,13 @@ class Accumulator(SM):
             return (state + 0, state + 0)
     
 class Gain(SM):
-    def __init__(self, initialVal = 0) -> None:
-        self.startState = initialVal
-
+    """  
+    Gain State machine:
+    n(s,i) = s
+    o(s,i) = s * i
+    startState : user determined
+    """
+    
     def getNextValues(self, state, inp) -> tuple:
         try:
             return(state, inp * state)
@@ -95,8 +100,15 @@ class Gain(SM):
         return self.state
     
 class Average2(SM):
-    def __init__(self, initialVal = 0) -> None:
-        self.startState = initialVal
+    """  
+    Average2 SM:
+    n(s,i) = i
+    o(s,i) = (s + i) / 2
+    startState = 0
+    """
+
+    def __init__(self) -> None:
+        super().__init__(0)
 
     def getState(self):
         return self.state
