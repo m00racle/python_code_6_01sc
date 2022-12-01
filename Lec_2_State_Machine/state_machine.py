@@ -41,13 +41,27 @@ class SM:
 
         for inp in inps:
             (s, o) = self.getNextValues(self.state, inp)
+            # NOTE: getNextValues() function must return (next state, output)
             print(f"In: {inp} Out: {o} Next State: {s}")
             result.append(self.step(inp))
         
         return result
 
     def run(self, n = 10):
+        """  
+        step but no input is given
+        """
         return self.transduce([None] * n)
+
+    def getNextValues(self, state, inp) -> tuple:
+        """  
+        returns : tuple -> (next state, output)
+        this is supposed to be abstract function which must be defined in sub class
+        for now let's just pass it
+        NOTE: this is PURE FUNCTION don't change self.state from this function
+        """
+        pass
+
 
 class Accumulator(SM):
     """  
@@ -61,7 +75,35 @@ class Accumulator(SM):
         PURE FUNCTION MUST NOT change self.state
         """
         # remember in given start of time the state is the same as previous output
-        if inp == None : inp = 0
-        return (state + inp, state + inp)
+        try: 
+            return (state + inp, state + inp)
+        except TypeError:
+            # expect classes that do not give any
+            return (state + 0, state + 0)
     
+class Gain(SM):
+    def __init__(self, initialVal = 0) -> None:
+        self.startState = initialVal
+
+    def getNextValues(self, state, inp) -> tuple:
+        try:
+            return(state, inp * state)
+        except TypeError:
+            return(state, 0 * state)
+
+    def getState(self):
+        return self.state
+    
+class Average2(SM):
+    def __init__(self, initialVal = 0) -> None:
+        self.startState = initialVal
+
+    def getState(self):
+        return self.state
+
+    def getNextValues(self, state, inp) -> tuple:
+        try:
+            return (inp, (state + inp)/2)
+        except TypeError:
+            return (0, 0)
     
