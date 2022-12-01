@@ -20,6 +20,9 @@ class SM:
 
     def start(self):
         self.state = self.startState
+
+    def getState(self):
+        return self.state
     
     def step(self, inp):
         """  
@@ -95,9 +98,6 @@ class Gain(SM):
             return(state, inp * state)
         except TypeError:
             return(state, 0 * state)
-
-    def getState(self):
-        return self.state
     
 class Average2(SM):
     """  
@@ -108,10 +108,9 @@ class Average2(SM):
     """
 
     def __init__(self) -> None:
+        # the startState is always 0
         super().__init__(0)
 
-    def getState(self):
-        return self.state
 
     def getNextValues(self, state, inp) -> tuple:
         try:

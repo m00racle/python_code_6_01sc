@@ -87,3 +87,6 @@ class TestAverage2Class(unittest.TestCase):
         self.assertEqual(self.a.run(3), [0,0,0], "the empty run returns wrong")
         self.assertEqual(self.a.getState(), 0, "final state is wrong")
     
+class TestLanguageAcceptorClass(unittest.TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
