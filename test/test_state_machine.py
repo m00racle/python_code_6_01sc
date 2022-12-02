@@ -29,14 +29,22 @@ class TestAccumulator(unittest.TestCase):
         self.assertEqual(self.b.step(0), 110, "state is wrong")
     
     def test_transduces_inputs_returns_correct_output_list(self):
-        inps = [100, -3, 4, -123, 10]
-        comp = [100, 97, 101, -22, -12]
+        """  
+        update: this test also include invalid inputs that should returns None
+        and retain previous state
+        """
+        inps = [100, -3, 4, None, 10]
+        comp = [100, 97, 101, None, 111]
         self.assertEqual(self.a.transduce(inps), comp)
     
     def test_transduce_verbose_print_steps_and_return_list(self):
+        """  
+        update: this test also include invalid inputs that should returns None
+        and retain previous state
+        """
         # setup
-        inps = [100, -3, 4, -123, 10]
-        comp = [100, 97, 101, -22, -12]
+        inps = [100, -3, 4, 'q', 10]
+        comp = [100, 97, 101, None, 111]
         # this is to capture printed message
         capOut = io.StringIO() 
         sys.stdout = capOut
@@ -45,8 +53,8 @@ class TestAccumulator(unittest.TestCase):
                 "In: 100 Out: 100 Next State: 100\n" + \
                 "In: -3 Out: 97 Next State: 97\n" + \
                 "In: 4 Out: 101 Next State: 101\n" + \
-                "In: -123 Out: -22 Next State: -22\n" + \
-                "In: 10 Out: -12 Next State: -12\n"
+                "In: q Out: None Next State: 101\n" + \
+                "In: 10 Out: 111 Next State: 111\n"
         
         # action
         out = self.a.transduce(inps, verbose=True)
