@@ -175,10 +175,9 @@ class ABC(SM):
         super().__init__(0)
 
     def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
-        fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
-        fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
-        efn = lambda s,i : 3
-        efo = lambda s,i : False
+        efn = fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
+        efo = fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
+        
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
 class UpDown(SM):
@@ -193,6 +192,8 @@ class UpDown(SM):
         s - 1 if i = d
     
     fo(s,i) = fn(s,i)
+
+    error handling function
     efn(s,i) = s (the state unchanged in error)
     efo(s,i) = None (the output is None in error)
     """
@@ -223,4 +224,6 @@ class Delay(SM):
     """
     # TODO: define and test getNextValues according to the new standard
     def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+        fn = lambda s,i : i
+        efn = fo = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)

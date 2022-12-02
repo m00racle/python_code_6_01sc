@@ -233,4 +233,52 @@ class TestDelayClass(unittest.TestCase):
     test for class Delay(SM)
     """
     # TODO: get all specs tested here for Delay State machine
-    pass
+    def test_given_any_start_state_any_input_step_woks(self):
+        """  
+        test start state any (in this case sting)
+        make onw step pass different type as argument in this case int
+        should return corect steps.
+        """
+        d = sm.Delay('s')
+        d.start()
+        self.assertEqual(d.step(2), 's', "check output failed")
+        self.assertEqual(d.getState(), 2, "next state is incorrect")
+    
+    def test_transduce_verbose_any_start_any_inputs_return_correct_list_and_printed(self):
+        """  
+        test None as start state
+        input various data type int, string, boolean
+        should return correct list
+        should print correct output in verbose
+        """
+        # setup
+        d = sm.Delay(None)
+        d.start()
+        capOut = io.StringIO()
+        sys.stdout = capOut
+
+        # action
+        result = d.transduce([3, 'sit', True, -0.5], True)
+        sys.stdout = sys.__stdout__
+        printed =\
+            "Start state: None\n" +\
+            "In: 3 Out: None Next State: 3\n" +\
+            "In: sit Out: 3 Next State: sit\n" +\
+            "In: True Out: sit Next State: True\n" +\
+            "In: -0.5 Out: True Next State: -0.5\n"
+        
+        # assert
+        self.assertEqual(result, [None, 3, 'sit', True], "output list is wrong")
+        self.assertEqual(capOut.getvalue(), printed)
+
+    def test_run_none_input(self):
+        """  
+        test start state integer
+        then call run(4) function 
+        should return list of int and None
+        """
+        # arrange
+        d = sm.Delay(100)
+        d.start()
+        # action and assert
+        self.assertEqual(d.run(4), [100, None, None, None], "run() output is wrong")
