@@ -142,7 +142,11 @@ class TestUpDownClass(unittest.TestCase):
     tests for class UpDown(SM)
     """
     # TODO: get all specification tested here
-    pass
+    def test_up_down_from_negative_start_returns_correct_list_sequence(self):
+        # setup
+        ud = sm.UpDown(-2)
+        ud.start()
+        self.assertEqual(ud.transduce(['u', 'u', 'u', 'd', 'd', 'u']), [-1, 0, 1, 0, -1, 0])
 
 class TestDelayClass(unittest.TestCase):
     """  

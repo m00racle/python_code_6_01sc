@@ -59,7 +59,7 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, definp = 0, fn = None, fo = None) -> tuple:
+    def getNextValues(self, state, inp, definp = 0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
@@ -84,7 +84,7 @@ class Accumulator(SM):
     startState : user defined
     """
     
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         fn = lambda s,i : s + i
         fo = fn
         return super().getNextValues(state, inp, definp, fn, fo)
@@ -103,7 +103,7 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         # I put the constan self.k directly to the function
         # n(s,i) = k * i
         # o(s,i) = k * i
@@ -124,7 +124,7 @@ class Average2(SM):
         super().__init__(0)
 
 
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         try:
             fn = lambda s,i : i
             fo = lambda s,i : (s + i) / 2
@@ -159,7 +159,7 @@ class ABC(SM):
     def __init__(self) -> None:
         super().__init__(0)
 
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         definp = 'd'
         fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
         fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
@@ -179,7 +179,7 @@ class UpDown(SM):
     fo(s,i) = fn(s,i)
     """
     # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
         return super().getNextValues(state, inp, definp, fn, fo)
 
 class Delay(SM):
