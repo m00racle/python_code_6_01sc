@@ -59,21 +59,21 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, definp = 0, fs = None, fo = None) -> tuple:
+    def getNextValues(self, state, inp, definp = 0, fn = None, fo = None) -> tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
         for now let's just pass it
         definp is the default value when the input is None
-        fs = n(s,i) -> programmer must provide function definition 
+        fn = n(s,i) -> programmer must provide function definition 
         fo = o(s,i) -> programmer must provide function definition
         NOTE: this is PURE FUNCTION don't change self.state from this function
         """
         try:
-            return(fs(state, inp), fo(state, inp))
+            return(fn(state, inp), fo(state, inp))
         except TypeError:
             # provide empty input default value
-            return(fs(state, definp), fo(state, definp))
+            return(fn(state, definp), fo(state, definp))
     
 
 class Accumulator(SM):
@@ -84,10 +84,10 @@ class Accumulator(SM):
     startState : user defined
     """
     
-    def getNextValues(self, state, inp, definp=0, fs=None, fo=None) -> tuple:
-        fs = lambda s,i : s + i
-        fo = fs
-        return super().getNextValues(state, inp, definp, fs, fo)
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+        fn = lambda s,i : s + i
+        fo = fn
+        return super().getNextValues(state, inp, definp, fn, fo)
     
         
     
@@ -103,13 +103,13 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp, definp=0, fs=None, fo=None) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
         # I put the constan self.k directly to the function
         # n(s,i) = k * i
         # o(s,i) = k * i
-        fs = lambda s,i : self.k * i
-        fo = fs
-        return super().getNextValues(state, inp, definp, fs, fo)
+        fn = lambda s,i : self.k * i
+        fo = fn
+        return super().getNextValues(state, inp, definp, fn, fo)
     
 class Average2(SM):
     """  
@@ -124,11 +124,15 @@ class Average2(SM):
         super().__init__(0)
 
 
-    def getNextValues(self, state, inp) -> tuple:
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
         try:
-            return (inp, (state + inp)/2)
+            fn = lambda s,i : i
+            fo = lambda s,i : (s + i) / 2
+            return super().getNextValues(state, inp, definp, fn, fo)
         except TypeError:
-            return (0, 0)
+            fn = lambda s,i : 0
+            fo = lambda s,i : 0
+            return super().getNextValues(state, inp, definp, fn, fo)
     
 class ABC(SM):
     """  
