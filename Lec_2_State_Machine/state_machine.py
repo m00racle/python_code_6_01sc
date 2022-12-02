@@ -53,7 +53,7 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : None, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
@@ -62,7 +62,8 @@ class SM:
         fo = o(s,i) -> programmer must provide function definition
         NOTE: this is PURE FUNCTION don't change self.state from this function
 
-        efn = n(s,i) when i = None and handled the raised Exception (including typeError)
+        efn = n(s,i) when i = s and handled the raised Exception (including typeError) by retaining the last state
+        NOTE: retaining previous valid state will prepare the SM to handle the next valid input
         efo = o(s,i) when i = None and handled the raised Exception (including typeError) 
         """
         try:
