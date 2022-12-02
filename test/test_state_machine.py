@@ -137,3 +137,16 @@ class TestLanguageAcceptorClass(unittest.TestCase):
         self.assertEqual(self.abc.run(3), [False, False, False], "outputs WRONG")
         self.assertEqual(self.abc.getState(), 3, "Final state is wrong")
         
+class TestUpDownClass(unittest.TestCase):
+    """  
+    tests for class UpDown(SM)
+    """
+    # TODO: get all specification tested here
+    pass
+
+class TestDelayClass(unittest.TestCase):
+    """  
+    test for class Delay(SM)
+    """
+    # TODO: get all specs tested here for Delay State machine
+    pass

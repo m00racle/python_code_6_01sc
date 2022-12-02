@@ -165,3 +165,34 @@ class ABC(SM):
         fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
         return super().getNextValues(state, inp, definp, fn, fo)
     
+class UpDown(SM):
+    """  
+    class for Up Down counter State Machine subcalss of SM
+    S = integers
+    I = {u,d}
+    O = integers
+    startState : user defined
+    fn(s,i) =
+        s + 1 if i = u
+        s - 1 if i = d
+    
+    fo(s,i) = fn(s,i)
+    """
+    # TODO: define and test getNextValues according to the new standard
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+        return super().getNextValues(state, inp, definp, fn, fo)
+
+class Delay(SM):
+    """  
+    class for Delay State Machine subclass of SM
+    S = Any
+    I = Any
+    O = Any
+    startState : user defined
+
+    fn(s,i) = i
+    fo(s,i) = s
+    """
+    # TODO: define and test getNextValues according to the new standard
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+        return super().getNextValues(state, inp, definp, fn, fo)
