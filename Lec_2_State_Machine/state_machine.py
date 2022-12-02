@@ -53,7 +53,7 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
@@ -68,9 +68,33 @@ class SM:
         """
         try:
             return(fn(state, inp), fo(state, inp))
-        except Exception:
+        except Exception as e:
             # provide state and output when the input raise any exception (including TypeError)
-            return(efn(state, inp), efo(state, inp))
+            if efn is None and efo is None : return(self.fnErr(state, e), self.foErr(state, e))
+            if efn is None : return (self.fnErr(state, e), efo(state, e))
+            if efo is None : return (efn(state, e), self.foErr(state, e))
+            return(efn(state, e), efo(state, e))
+        
+    def fnErr(self, s, e):
+        """  
+        function next state error handler
+        s : state (the previous valid state)
+        e : thrown exception
+        """
+        return s
+    
+    def foErr(self, s, e):
+        """  
+        function output error handler
+        """
+        return None
+    
+    def throw(self, excep):
+        """  
+        helper function to throw or raise exception from lambda function
+        This is because lambda function in Python can't directly raise any exception.
+        """
+        raise excep
     
 
 class Accumulator(SM):
@@ -85,7 +109,7 @@ class Accumulator(SM):
     efo(s,i) = None
     """
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         fo = fn = lambda s,i : s + i
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
@@ -107,7 +131,7 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         # I put the constan self.k directly to the function
         # n(s,i) = k * i
         # o(s,i) = k * i
@@ -143,7 +167,7 @@ class Average2(SM):
     #         fo = lambda s,i : 0
     #         return super().getNextValues(state, inp, definp, fn, fo)
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         fn = lambda s,i : i
         fo = lambda s,i : (s + i) / 2
         
@@ -174,7 +198,7 @@ class ABC(SM):
     def __init__(self) -> None:
         super().__init__(0)
 
-    def getNextValues(self, state, inp):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         efn = fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
         efo = fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
         
@@ -199,17 +223,10 @@ class UpDown(SM):
     """
 
     # : define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(ValueError("unidentified input value"))
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
-
-    def throw(self, excep):
-        """  
-        helper function to throw or raise exception from lambda function
-        This is because lambda function in Python can't directly raise any exception.
-        """
-        raise excep
 
 class Delay(SM):
     """  
@@ -223,7 +240,7 @@ class Delay(SM):
     fo(s,i) = s
     """
     # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         fn = lambda s,i : i
         fo = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)
@@ -250,18 +267,10 @@ class SumLast3(SM):
         """
         super().__init__((0, 0))
 
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: s, efo=lambda s, i: None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
         """  
         get the next state and current output based on specification
         """
         fn = lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input'))
         fo = lambda s,i : s[0] + s[1] + i
         return super().getNextValues(state, inp, fn, fo, efn, efo)
-
-    def throw(self, e):
-        """  
-        helper function to throw exceptions
-        e : exception
-        NOTE: Python does not support throwing exception from lambda function!
-        """
-        raise e
