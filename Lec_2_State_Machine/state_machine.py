@@ -227,3 +227,41 @@ class Delay(SM):
         fn = lambda s,i : i
         fo = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)
+
+class SumLast3(SM):
+    """  
+    class for Sum Last 3 components
+    Specification:
+    S = number (int and float)
+    I = number (int and float)
+    O = number (int and float)
+    StartState = (0,0)
+
+    fn(s,i) = (s[1], i)
+    fo(s,i) = s[0] + s[1] + i
+
+    error function:
+    efn(s,i) = s
+    efo(s,i) = None
+    """
+    def __init__(self) -> None:
+        """  
+        the startState = (0,0)
+        """
+        super().__init__((0, 0))
+
+    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: s, efo=lambda s, i: None):
+        """  
+        get the next state and current output based on specification
+        """
+        fn = lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input'))
+        fo = lambda s,i : s[0] + s[1] + i
+        return super().getNextValues(state, inp, fn, fo, efn, efo)
+
+    def throw(self, e):
+        """  
+        helper function to throw exceptions
+        e : exception
+        NOTE: Python does not support throwing exception from lambda function!
+        """
+        raise e

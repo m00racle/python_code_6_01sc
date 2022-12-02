@@ -282,3 +282,81 @@ class TestDelayClass(unittest.TestCase):
         d.start()
         # action and assert
         self.assertEqual(d.run(4), [100, None, None, None], "run() output is wrong")
+
+class TestSumLast3(unittest.TestCase):
+    """  
+    class for Sum Last 3 components
+    Specification:
+    S = number (int and float)
+    I = number (int and float)
+    O = number (int and float)
+    StartState = (0,0)
+
+    fn(s,i) = (s[1], i)
+    fo(s,i) = s[0] + s[1] + i
+
+    error function:
+    efn(s,i) = s
+    efo(s,i) = None
+    """
+    def test_transduce_verbose(self):
+        """  
+        test the state, input, and output as specified above
+        """
+        # arrange
+        l = sm.SumLast3()
+        l.start()
+        capture = io.StringIO()
+        sys.stdout = capture
+        goal_result = [2, 3, 6, 8, 17, 15, 13, 4, 8]
+        expected_print = \
+            "Start state: (0, 0)\n" + \
+            "In: 2 Out: 2 Next State: (0, 2)\n"+\
+            "In: 1 Out: 3 Next State: (2, 1)\n"+\
+            "In: 3 Out: 6 Next State: (1, 3)\n"+\
+            "In: 4 Out: 8 Next State: (3, 4)\n"+\
+            "In: 10 Out: 17 Next State: (4, 10)\n"+\
+            "In: 1 Out: 15 Next State: (10, 1)\n"+\
+            "In: 2 Out: 13 Next State: (1, 2)\n"+\
+            "In: 1 Out: 4 Next State: (2, 1)\n"+\
+            "In: 5 Out: 8 Next State: (1, 5)\n"
+        
+        # action
+        result = l.transduce([2, 1, 3, 4, 10, 1, 2, 1, 5], verbose = True)
+        sys.stdout = sys.__stdout__
+
+        # assert:
+        self.assertEqual(result, goal_result, "LIST OUTPUT INCORRECT")
+        self.assertEqual(capture.getvalue(), expected_print, "PRINT OUTPUT INCORRECT")
+        self.assertEqual(l.getState(), (1,5), "FINAL STATE INCORRECT")
+
+    def test_transduce_verbose_with_invalid_inputs(self):
+        """  
+        test how to handle invalid inputs
+        """
+        # arrange
+        l = sm.SumLast3()
+        l.start()
+        capture = io.StringIO()
+        sys.stdout = capture
+        goal_result = [2, 3, None, 7, 15, 15, None, 12, None]
+        expected_print = \
+            "Start state: (0, 0)\n" + \
+            "In: 2 Out: 2 Next State: (0, 2)\n"+\
+            "In: 1 Out: 3 Next State: (2, 1)\n"+\
+            "In: a Out: None Next State: (2, 1)\n"+\
+            "In: 4 Out: 7 Next State: (1, 4)\n"+\
+            "In: 10 Out: 15 Next State: (4, 10)\n"+\
+            "In: 1 Out: 15 Next State: (10, 1)\n"+\
+            "In: None Out: None Next State: (10, 1)\n"+\
+            "In: 1 Out: 12 Next State: (1, 1)\n"+\
+            "In: True Out: None Next State: (1, 1)\n"
+        
+        # action
+        result = l.transduce([2, 1, 'a', 4, 10, 1, None, 1, True], verbose = True)
+        sys.stdout = sys.__stdout__
+
+        # assert:
+        self.assertEqual(result, goal_result, "LIST OUTPUT INCORRECT")
+        self.assertEqual(capture.getvalue(), expected_print, "PRINT OUTPUT INCORRECT")
+        self.assertEqual(l.getState(), (1,1), "FINAL STATE INCORRECT")
