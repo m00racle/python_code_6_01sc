@@ -188,10 +188,22 @@ class UpDown(SM):
         s - 1 if i = d
     
     fo(s,i) = fn(s,i)
+    efn(s,i) = s (the state unchanged in error)
+    efo(s,i) = None (the output is None in error)
     """
-    # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
-        return super().getNextValues(state, inp, definp, fn, fo)
+
+    # : define and test getNextValues according to the new standard
+    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(TypeError("invalid input"))
+        efn = lambda s,i : s
+        return super().getNextValues(state, inp, fn, fo, efn, efo)
+
+    def throw(self, excep):
+        """  
+        helper function to throw or raise exception from lambda function
+        This is because lambda function in Python can't directly raise any exception.
+        """
+        raise excep
 
 class Delay(SM):
     """  
@@ -205,5 +217,5 @@ class Delay(SM):
     fo(s,i) = s
     """
     # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
-        return super().getNextValues(state, inp, definp, fn, fo)
+    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+        return super().getNextValues(state, inp, fn, fo, efn, efo)

@@ -148,6 +148,75 @@ class TestUpDownClass(unittest.TestCase):
         ud.start()
         self.assertEqual(ud.transduce(['u', 'u', 'u', 'd', 'd', 'u']), [-1, 0, 1, 0, -1, 0])
 
+    def test_up_down_transduce_verbose_output_returns_correct_outputs(self):
+        # set
+        ud = sm.UpDown()
+        ud.start()
+        capOut = io.StringIO()
+        sys.stdout = capOut
+        # action
+        result = ud.transduce(['u', 'u', 'u', 'd', 'd', 'u'], verbose = True)
+        sys.stdout = sys.__stdout__
+        printed = \
+            "Start state: 0\n" +\
+            "In: u Out: 1 Next State: 1\n"+\
+            "In: u Out: 2 Next State: 2\n"+\
+            "In: u Out: 3 Next State: 3\n"+\
+            "In: d Out: 2 Next State: 2\n"+\
+            "In: d Out: 1 Next State: 1\n"+\
+            "In: u Out: 2 Next State: 2\n"
+        # assert
+        self.assertEqual(result, [1, 2, 3, 2, 1, 2], "output list is INCORRECT")
+        self.assertEqual(capOut.getvalue(), printed, "printed output is incorrect")
+    
+    def test_Up_down_run_with_none_input_returns_constant_state(self):
+        # set
+        ud = sm.UpDown(1)
+        ud.start()
+        capOut = io.StringIO()
+        sys.stdout = capOut
+        # action
+        result = ud.transduce([None, None, None, None, None, None], verbose = True)
+        sys.stdout = sys.__stdout__
+        printed = \
+            "Start state: 1\n" +\
+            "In: None Out: None Next State: 1\n"+\
+            "In: None Out: None Next State: 1\n"+\
+            "In: None Out: None Next State: 1\n"+\
+            "In: None Out: None Next State: 1\n"+\
+            "In: None Out: None Next State: 1\n"+\
+            "In: None Out: None Next State: 1\n"
+        # assert
+        self.assertEqual(result, [None, None, None, None, None, None], "output list is INCORRECT")
+        self.assertEqual(capOut.getvalue(), printed, "printed output is incorrect")
+
+    def test_invalid_input_handled_type_error(self):
+        """  
+        when pass invalid input to the transducer thus to getNextValue 
+        It should be handled instead raising type error exception
+        thus it still should return output = None and state = state
+        """
+        # set
+        ud = sm.UpDown()
+        ud.start()
+        capOut = io.StringIO()
+        sys.stdout = capOut
+        # action
+        result = ud.transduce(['u', 'u', 'i', 'd', 'b', 'u'], verbose = True)
+        sys.stdout = sys.__stdout__
+        printed = \
+            "Start state: 0\n" +\
+            "In: u Out: 1 Next State: 1\n"+\
+            "In: u Out: 2 Next State: 2\n"+\
+            "In: i Out: None Next State: 2\n"+\
+            "In: d Out: 1 Next State: 1\n"+\
+            "In: b Out: None Next State: 1\n"+\
+            "In: u Out: 2 Next State: 2\n"
+        
+        # assert
+        self.assertEqual(result, [1, 2, None, 1, None, 2], "output list is INCORRECT")
+        self.assertEqual(capOut.getvalue(), printed, "printed output is incorrect")
+
 class TestDelayClass(unittest.TestCase):
     """  
     test for class Delay(SM)
