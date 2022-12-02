@@ -75,14 +75,18 @@ class SM:
 class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
-    n(s,i) = s + i
-    o(s,i) = s + i
+    fn(s,i) = s + i
+    fo(s,i) = s + i
     startState : user defined
+
+    error handling function:
+    efn(s,i) = s
+    efo(s,i) = None
     """
     
     def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
         fo = fn = lambda s,i : s + i
-        efo = efn = lambda s,i : s + 0
+        efn = lambda s,i : s
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
@@ -91,9 +95,12 @@ class Accumulator(SM):
 class Gain(SM):
     """  
     Gain State machine:
-    n(s,i) = k * i 
-    o(s,i) = k * i
+    fn(s,i) = k * i 
+    fo(s,i) = k * i
     startState : user determined
+
+    errror handling function:
+    efo(s,i) = efn(s,i) = 0
     """
    
     def __init__(self, initVal=0) -> None:
@@ -112,9 +119,13 @@ class Gain(SM):
 class Average2(SM):
     """  
     Average2 SM:
-    n(s,i) = i
-    o(s,i) = (s + i) / 2
+    fn(s,i) = i
+    fo(s,i) = (s + i) / 2
     startState = 0
+
+    error handling functions:
+    efn(s,i) = s
+    efo(s, i) = None
     """
 
     def __init__(self) -> None:
@@ -135,7 +146,7 @@ class Average2(SM):
     def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
         fn = lambda s,i : i
         fo = lambda s,i : (s + i) / 2
-        efo = efn = lambda s,i : 0
+        efn = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
 class ABC(SM):

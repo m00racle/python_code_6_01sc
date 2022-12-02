@@ -63,7 +63,7 @@ class TestAccumulator(unittest.TestCase):
         self.assertEqual(capOut.getvalue(), printed)
 
     def test_run_5_returns_5_None_list(self):
-        self.assertEqual(self.b.run(5), [100, 100, 100, 100, 100])
+        self.assertEqual(self.b.run(5), [None, None, None, None, None])
     
 class TestGainClass(unittest.TestCase):
     def setUp(self) -> None:
@@ -102,11 +102,14 @@ class TestAverage2Class(unittest.TestCase):
         self.a.start()
 
     def test_average_transducer_returns_list_of_correct_output_and_last_input_becomes_last_state(self):
-        self.assertEqual(self.a.transduce([100, -3, 4, -123, 10]), [50, 48.5, 0.5, -59.5, -56.5], "output list wrong")
+        """  
+        update: error handling function will retain the last valid state which can be used to handle valid input later on
+        """
+        self.assertEqual(self.a.transduce([100, -3, 4, None, 10]), [50, 48.5, 0.5, None, 7], "output list wrong")
         self.assertEqual(self.a.getState(), 10, "final state is wrong")
     
     def test_empty_input_run_returns_all_zero_and_final_state_zero(self):
-        self.assertEqual(self.a.run(3), [0,0,0], "the empty run returns wrong")
+        self.assertEqual(self.a.run(3), [None,None,None], "the empty run returns wrong")
         self.assertEqual(self.a.getState(), 0, "final state is wrong")
     
 class TestLanguageAcceptorClass(unittest.TestCase):
