@@ -85,9 +85,8 @@ class Accumulator(SM):
     efo(s,i) = None
     """
     
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
         fo = fn = lambda s,i : s + i
-        efn = lambda s,i : s
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
@@ -108,7 +107,7 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp):
         # I put the constan self.k directly to the function
         # n(s,i) = k * i
         # o(s,i) = k * i
@@ -144,10 +143,10 @@ class Average2(SM):
     #         fo = lambda s,i : 0
     #         return super().getNextValues(state, inp, definp, fn, fo)
     
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
         fn = lambda s,i : i
         fo = lambda s,i : (s + i) / 2
-        efn = lambda s,i : s
+        
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
 class ABC(SM):
@@ -175,7 +174,7 @@ class ABC(SM):
     def __init__(self) -> None:
         super().__init__(0)
 
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp):
         efn = fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
         efo = fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
         
@@ -200,9 +199,9 @@ class UpDown(SM):
     """
 
     # : define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
         fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(ValueError("unidentified input value"))
-        efn = lambda s,i : s
+        
         return super().getNextValues(state, inp, fn, fo, efn, efo)
 
     def throw(self, excep):
@@ -224,7 +223,7 @@ class Delay(SM):
     fo(s,i) = s
     """
     # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
+    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=lambda s,i : s, efo=lambda s,i : None):
         fn = lambda s,i : i
-        efn = fo = lambda s,i : s
+        fo = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)
