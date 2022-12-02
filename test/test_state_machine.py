@@ -64,15 +64,29 @@ class TestGainClass(unittest.TestCase):
 
     def test_transduce_gain_returns_correct_list(self):
         self.assertEqual(self.g.transduce([1.1, -2, 100, 5]), [3.3000000000000003, -6, 300, 15])
+
+    def test_transduce_verbose_outputs_correct_outputs_and_states(self):
+        capOout = io.StringIO()
+        sys.stdout = capOout
+        printed = \
+                "Start state: 3\n" + \
+                "In: 1.1 Out: 3.3000000000000003 Next State: 3.3000000000000003\n" + \
+                "In: -2 Out: -6 Next State: -6\n" + \
+                "In: 100 Out: 300 Next State: 300\n" + \
+                "In: 5 Out: 15 Next State: 15\n"
+        out = self.g.transduce([1.1, -2, 100, 5], True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(out, [3.3000000000000003, -6, 300, 15], "returns output is wrong")
+        self.assertEqual(capOout.getvalue(), printed, "the step by step outputs and states are WRONG")
     
     def test_run_with_no_input_gain_returns_all_zero(self):
         self.assertEqual(self.g.run(), [0,0,0,0,0,0,0,0,0,0])
     
     def test_state_after_whole_runs_and_transduce_remains_the_same(self):
         self.g.run()
-        self.assertEqual(self.g.getState(), 3, "state after run() is wrong supposed to be 3")
+        self.assertEqual(self.g.getState(), 0, "state after run() is wrong supposed to be 3")
         self.g.transduce([1.1, -2, 100, 5])
-        self.assertEqual(self.g.getState(), 3, "state after transduce is wrong suppose to be 3")
+        self.assertEqual(self.g.getState(), 15, "state after transduce is wrong suppose to be 3")
 
 class TestAverage2Class(unittest.TestCase):
     def setUp(self) -> None:

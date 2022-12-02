@@ -79,6 +79,9 @@ class SM:
 class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
+    n(s,i) = s + i
+    o(s,i) = s + i
+    startState : user defined
     """
     
     def getNextValues(self, state, inp, definp=0, fs=None, fo=None) -> tuple:
@@ -91,18 +94,22 @@ class Accumulator(SM):
 class Gain(SM):
     """  
     Gain State machine:
-    n(s,i) = s
-    o(s,i) = s * i
+    n(s,i) = k * i 
+    o(s,i) = k * i
     startState : user determined
     """
-    # TODO: the init needs to be overriden to include self.k = initVal 
-    # good chance to try add code after super.
-    # TODO: consider to change to getNextState
-    def getNextValues(self, state, inp) -> tuple:
-        try:
-            return(state, inp * state)
-        except TypeError:
-            return(state, 0 * state)
+   
+    def __init__(self, initVal=0) -> None:
+        super().__init__(initVal)
+        self.k = initVal
+    
+    def getNextValues(self, state, inp, definp=0, fs=None, fo=None) -> tuple:
+        # I put the constan self.k directly to the function
+        # n(s,i) = k * i
+        # o(s,i) = k * i
+        fs = lambda s,i : self.k * i
+        fo = fs
+        return super().getNextValues(state, inp, definp, fs, fo)
     
 class Average2(SM):
     """  
