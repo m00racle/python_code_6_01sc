@@ -47,7 +47,7 @@ class SM:
 
         for inp in inps:
             (s, o) = self.getNextValues(self.state, inp)
-            # NOTE: getNextValues() function must return (next state, output)
+            
             print(f"In: {inp} Out: {o} Next State: {s}")
             result.append(self.step(inp))
         
@@ -59,33 +59,34 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp) -> tuple:
+    def getNextValues(self, state, inp, definp = 0, fs = None, fo = None) -> tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
         for now let's just pass it
+        definp is the default value when the input is None
+        fs = n(s,i) -> programmer must provide function definition 
+        fo = o(s,i) -> programmer must provide function definition
         NOTE: this is PURE FUNCTION don't change self.state from this function
         """
-        pass
-    # TODO: make getNextValues to have default procedures
-    # TODO: make getNextState function to support the getNextValues
-
+        try:
+            return(fs(state, inp), fo(state, inp))
+        except TypeError:
+            # provide empty input default value
+            return(fs(state, definp), fo(state, definp))
+    
 
 class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
     """
-    # TODO: consider change this to override getNextState
-    def getNextValues(self, state, inp) -> tuple:
-        """  
-        PURE FUNCTION MUST NOT change self.state
-        """
-        # remember in given start of time the state is the same as previous output
-        try: 
-            return (state + inp, state + inp)
-        except TypeError:
-            # expect classes that do not give any
-            return (state + 0, state + 0)
+    
+    def getNextValues(self, state, inp, definp=0, fs=None, fo=None) -> tuple:
+        fs = lambda s,i : s + i
+        fo = fs
+        return super().getNextValues(state, inp, definp, fs, fo)
+    
+        
     
 class Gain(SM):
     """  
