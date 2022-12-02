@@ -147,18 +147,21 @@ class ABC(SM):
         else : 3
     
     o(s,i):
+        if s == 0 and i == a : True 
+        if s == 1 and i == b : True
+        if s == 2 and i == c : True
+        else : False
+
+    o(s,i):
         if n(s,i) == 3 : False
         else : True
     """
     def __init__(self) -> None:
         super().__init__(0)
 
-    def getNextValues(self, state, inp) -> tuple:
-        try:
-            if state == 0 and inp == 'a' : return (1, True)
-            elif state == 1 and inp == 'b' : return (2, True)
-            elif state == 2 and inp == 'c' : return (0, True)
-            else : return (3, False)
-        except TypeError:
-            return (3, False)
+    def getNextValues(self, state, inp, definp=0, fn=None, fo=None) -> tuple:
+        definp = 'd'
+        fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
+        fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
+        return super().getNextValues(state, inp, definp, fn, fo)
     
