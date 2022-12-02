@@ -8,12 +8,6 @@ class SM:
     This SM class is intended as Abstract class
     Thus it is not meant to be instantiated to create and object
     Hence this will be used as blueprint to create another sub - class
-
-    thus, many variables here are not defined yet which should be declared and defined in sub class
-
-    In the sub-class you must define the startState variable
-    also defince getNextValues(self, state, inp) function
-    NOTE: getNextValues is a pure function it will not change the value of self.state (that's the job of self.step function)
     """
     def __init__(self, initVal = 0) -> None:
         self.startState = initVal
@@ -68,13 +62,13 @@ class SM:
         fo = o(s,i) -> programmer must provide function definition
         NOTE: this is PURE FUNCTION don't change self.state from this function
 
-        efn = n(s,i) when i = None and handled the raised TypeError
-        efo = o(s,i) when i = None and handled the raised TypeError 
+        efn = n(s,i) when i = None and handled the raised Exception (including typeError)
+        efo = o(s,i) when i = None and handled the raised Exception (including typeError) 
         """
         try:
             return(fn(state, inp), fo(state, inp))
-        except TypeError:
-            # provide empty input default value
+        except Exception:
+            # provide state and output when the input raise any exception (including TypeError)
             return(efn(state, inp), efo(state, inp))
     
 
@@ -194,7 +188,7 @@ class UpDown(SM):
 
     # : define and test getNextValues according to the new standard
     def getNextValues(self, state, inp, fn=lambda s, i: None, fo=lambda s, i: None, efn=lambda s, i: None, efo=lambda s, i: None):
-        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(TypeError("invalid input"))
+        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(ValueError("unidentified input value"))
         efn = lambda s,i : s
         return super().getNextValues(state, inp, fn, fo, efn, efo)
 

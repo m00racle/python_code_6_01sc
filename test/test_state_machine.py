@@ -141,7 +141,7 @@ class TestUpDownClass(unittest.TestCase):
     """  
     tests for class UpDown(SM)
     """
-    # TODO: get all specification tested here
+    # : get all specification tested here
     def test_up_down_from_negative_start_returns_correct_list_sequence(self):
         # setup
         ud = sm.UpDown(-2)
