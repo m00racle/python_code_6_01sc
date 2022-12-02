@@ -110,10 +110,9 @@ class Gain(SM):
         # I put the constan self.k directly to the function
         # n(s,i) = k * i
         # o(s,i) = k * i
-        fn = lambda s,i : self.k * i
-        efn = lambda s,i : 0
-        fo = fn
-        efo = efn
+        fo = fn = lambda s,i : self.k * i
+        efo = efn = lambda s,i : 0
+        
         return super().getNextValues(state, inp, fn, fo, efn, efo)
     
 class Average2(SM):
