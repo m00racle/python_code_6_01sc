@@ -105,7 +105,7 @@ class SM:
         """
         return s
     
-    def foErr(self, s, i, e):
+    def foErr(self, s, i, e, msg = None):
         """  
         function current output error handler made if sub class wnat more sophisticated error handling
         function output error handler
@@ -113,8 +113,16 @@ class SM:
         i : current input which raised exception
         e : thrown exception
         OVERRIDE function for custom output error handling
+        NOTE: for user defined exception will be caught with default except thus it return args[0]
         """
-        return None
+        try:
+            raise e
+        except TypeError:
+            return msg
+        except ValueError:
+            return msg
+        except:
+            return e.args[0]
     
     def throw(self, excep):
         """  
