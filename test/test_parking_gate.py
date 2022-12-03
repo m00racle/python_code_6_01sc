@@ -57,7 +57,6 @@ class TestFreeGate(unittest.TestCase):
         # assert
         self.assertEqual(result, outputs, "OUTPUT LIST INCORRECT")
         self.assertEqual(cap.getvalue(), printout, "VERBOSE INCORRECT")
-        pass
 
     def teat_car_coming_to_gate_not_braking_violation(self):
         """  
