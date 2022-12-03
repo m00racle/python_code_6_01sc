@@ -213,15 +213,15 @@ class TestUpDownClass(unittest.TestCase):
         capOut = io.StringIO()
         sys.stdout = capOut
         # action
-        result = ud.transduce(['u', 'u', 'i', 'd', 'b', 'u'], verbose = True)
+        result = ud.transduce(['u', 'u', True, 'd', 'di', 'u'], verbose = True)
         sys.stdout = sys.__stdout__
         printed = \
             "Start state: 0\n" +\
             "In: u Out: 1 Next State: 1\n"+\
             "In: u Out: 2 Next State: 2\n"+\
-            "In: i Out: None Next State: 2\n"+\
+            "In: True Out: None Next State: 2\n"+\
             "In: d Out: 1 Next State: 1\n"+\
-            "In: b Out: None Next State: 1\n"+\
+            "In: di Out: None Next State: 1\n"+\
             "In: u Out: 2 Next State: 2\n"
         
         # assert

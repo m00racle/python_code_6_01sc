@@ -118,8 +118,10 @@ class SM:
         try:
             raise e
         except TypeError:
+            # change the msg value in override to pass custom returns for Type Error
             return msg
         except ValueError:
+            # change the msg value in override to pass custom returns for Type Error
             return msg
         except:
             return e.args[0]
@@ -263,7 +265,9 @@ class UpDown(SM):
 
     # : define and test getNextValues according to the new standard
     def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(ValueError("unidentified input value"))
+        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(RuntimeError(None))
+        # NOTE: I use run time error to cover for both Type error like passing None of True False 
+        # and wrong string 
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
 
