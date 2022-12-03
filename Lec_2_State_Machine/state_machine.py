@@ -1,5 +1,5 @@
 """  
-All types of state machine classes
+Super Class SM:
 """
 
 # create super class (meant to be abstract) 
@@ -10,9 +10,27 @@ class SM:
     Hence this will be used as blueprint to create another sub - class
     """
     def __init__(self, initVal = 0) -> None:
+        """  
+        initialize object type SM 
+        must provides start state
+        also provide dictionary type object called self.log
+        """
         self.startState = initVal
+        self.log = {}
 
     def start(self):
+        """  
+        REQUIRED when the State Machine want to be operational
+        This function must be called each time State Machine is want to be started after instantiated
+        as subclass object.
+        Basically just put the startState at the current state.
+
+        Can be handy if later on in the sub class they need a function to reset the State Machine.
+
+        parameters: self
+
+        returns : None
+        """
         self.state = self.startState
 
     def getState(self):
@@ -20,7 +38,8 @@ class SM:
     
     def step(self, inp):
         """  
-        find the next state and returns output for each time given inp : input
+        Change the instance state
+        Returns the output 
         """
         (s, o) = self.getNextValues(self.state, inp)
         self.state = s
@@ -62,30 +81,38 @@ class SM:
         fo = o(s,i) -> programmer must provide function definition
         NOTE: this is PURE FUNCTION don't change self.state from this function
 
-        efn = n(s,i) when i = s and handled the raised Exception (including typeError) by retaining the last state
+        efn = n(s,i) custom function invoked when exception raised passing last valid state and input to return next state
         NOTE: retaining previous valid state will prepare the SM to handle the next valid input
-        efo = o(s,i) when i = None and handled the raised Exception (including typeError) 
+        efo = o(s,i) custom function invoked when exception raised passing last valid state and input to return output
         """
         try:
             return(fn(state, inp), fo(state, inp))
         except Exception as e:
             # provide state and output when the input raise any exception (including TypeError)
-            if efn is None and efo is None : return(self.fnErr(state, e), self.foErr(state, e))
-            if efn is None : return (self.fnErr(state, e), efo(state, e))
-            if efo is None : return (efn(state, e), self.foErr(state, e))
-            return(efn(state, e), efo(state, e))
+            if efn is None and efo is None : return(self.fnErr(state, inp, e), self.foErr(state, inp, e))
+            if efn is None : return (self.fnErr(state, inp, e), efo(state, inp, e))
+            if efo is None : return (efn(state, inp, e), self.foErr(state, inp, e))
+            
+            return(efn(state, inp), efo(state, inp))
         
-    def fnErr(self, s, e):
+    def fnErr(self, s, i, e):
         """  
-        function next state error handler
-        s : state (the previous valid state)
+        function next state error handler made if the sub class want more complicated error handling
+        s : state (the previous valid state) retained
+        i : current input that raised exception
         e : thrown exception
+        OVERRIDE this function if you want custom error handling
         """
         return s
     
-    def foErr(self, s, e):
+    def foErr(self, s, i, e):
         """  
+        function current output error handler made if sub class wnat more sophisticated error handling
         function output error handler
+        s : state (the previous valid state) retained
+        i : current input which raised exception
+        e : thrown exception
+        OVERRIDE function for custom output error handling
         """
         return None
     
@@ -97,6 +124,10 @@ class SM:
         raise excep
     
 
+"""  *************************
+Sub classes implementing SM: *
+******************************
+"""
 class Accumulator(SM):
     """  
     sub class of SM which implementation is Accumulator State Machine
