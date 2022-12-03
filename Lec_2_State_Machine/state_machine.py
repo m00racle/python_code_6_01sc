@@ -95,28 +95,30 @@ class SM:
             
             return(efn(state, inp), efo(state, inp))
         
-    def fnErr(self, s, i, e):
+    def fnErr(self, state, inp, err):
         """  
         function next state error handler made if the sub class want more complicated error handling
-        s : state (the previous valid state) retained
-        i : current input that raised exception
-        e : thrown exception
+        state : state (the previous valid state) retained
+        inp : current input that raised exception
+        err : thrown exception
+        DEFAULT: return last valid state
         OVERRIDE this function if you want custom error handling
+        NOTE: overrride the state with the state you desired if there is an error raised:
         """
-        return s
+        return state
     
-    def foErr(self, s, i, e, msg = None):
+    def foErr(self, state, inp, err, msg = None):
         """  
         function current output error handler made if sub class wnat more sophisticated error handling
         function output error handler
-        s : state (the previous valid state) retained
-        i : current input which raised exception
-        e : thrown exception
+        state : state (the previous valid state) retained
+        inp : current input which raised exception
+        err : thrown exception
         OVERRIDE function for custom output error handling
         NOTE: for user defined exception will be caught with default except thus it return args[0]
         """
         try:
-            raise e
+            raise err
         except TypeError:
             # change the msg value in override to pass custom returns for Type Error
             return msg
@@ -124,7 +126,7 @@ class SM:
             # change the msg value in override to pass custom returns for Type Error
             return msg
         except:
-            return e.args[0]
+            return err.args[0]
     
     def throw(self, excep):
         """  
@@ -177,9 +179,16 @@ class Gain(SM):
         # n(s,i) = k * i
         # o(s,i) = k * i
         fo = fn = lambda s,i : self.k * i
-        efo = efn = lambda s,i : 0
         
         return super().getNextValues(state, inp, fn, fo, efn, efo)
+
+    def fnErr(self, state, inp, err):
+        state = 0
+        return super().fnErr(state, inp, err)
+    
+    def foErr(self, state, inp, err, msg=None):
+        msg = 0
+        return super().foErr(state, inp, err, msg)
     
 class Average2(SM):
     """  
