@@ -14,7 +14,7 @@ class TestFreeGate(unittest.TestCase):
     """
     def setUp(self) -> None:
         self.gate = pg.FreeGate()
-        self.gate.start()
+        
 
     def test_car_coming_and_existing_normal_scenario(self):
         """  
@@ -24,27 +24,27 @@ class TestFreeGate(unittest.TestCase):
         # arrange
         inputs = [('bottom', False, False), ('bottom', True, False), ('bottom', True, False), ('middle', True, False), ('middle', True, False), ('middle', True, False), ('top', True, False), ('top', True, False), ('top', True, False), ('top', True, True), ('top', True, True), ('top', True, False), ('middle', True, False), ('middle', True, False), ('middle', True, False), ('bottom', True, False), ('bottom', True, False)]
 
-        outputs = ['nop', 'raise', 'raise', 'raise', 'raise', 'raise', 'nop', 'nop', 'nop', 'lower', 'lower', 'lower', 'lower', 'lower', 'lower', 'nop', 'raise']
+        outputs = ['nop', 'lift', 'lift', 'lift', 'lift', 'lift', 'nop', 'nop', 'nop', 'drop', 'drop', 'drop', 'drop', 'drop', 'drop', 'nop', 'lift']
 
         printout = \
-            "Stat state: waiting\n" +\
+            "Start state: waiting\n" +\
             "In: ('bottom', False, False) Out: nop Next State: waiting\n" +\
-            "In: ('bottom', True, False) Out: raise Next State: raising\n" +\
-            "In: ('bottom', True, False) Out: raise Next State: raising\n" +\
-            "In: ('middle', True, False) Out: raise Next State: raising\n" +\
-            "In: ('middle', True, False) Out: raise Next State: raising\n" +\
-            "In: ('middle', True, False) Out: raise Next State: raising\n" +\
+            "In: ('bottom', True, False) Out: lift Next State: raising\n" +\
+            "In: ('bottom', True, False) Out: lift Next State: raising\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
             "In: ('top', True, False) Out: nop Next State: raised\n" +\
             "In: ('top', True, False) Out: nop Next State: raised\n" +\
             "In: ('top', True, False) Out: nop Next State: raised\n" +\
-            "In: ('top', True, True) Out: lower Next State: lowering\n" +\
-            "In: ('top', True, True) Out: lower Next State: lowering\n" +\
-            "In: ('top', True, False) Out: lower Next State: lowering\n" +\
-            "In: ('middle', True, False) Out: lower Next State: lowering\n" +\
-            "In: ('middle', True, False) Out: lower Next State: lowering\n" +\
-            "In: ('middle', True, False) Out: lower Next State: lowering\n" +\
+            "In: ('top', True, True) Out: drop Next State: lowering\n" +\
+            "In: ('top', True, True) Out: drop Next State: lowering\n" +\
+            "In: ('top', True, False) Out: drop Next State: lowering\n" +\
+            "In: ('middle', True, False) Out: drop Next State: lowering\n" +\
+            "In: ('middle', True, False) Out: drop Next State: lowering\n" +\
+            "In: ('middle', True, False) Out: drop Next State: lowering\n" +\
             "In: ('bottom', True, False) Out: nop Next State: waiting\n" +\
-            "In: ('bottom', True, False) Out: raise Next State: raising\n"
+            "In: ('bottom', True, False) Out: lift Next State: raising\n"
         
         cap = io.StringIO()
         sys.stdout = cap
