@@ -63,18 +63,18 @@ class TestFreeGate(unittest.TestCase):
         """  
         test what happen when car just ran over the gate
         """
-        pass
+        self.fail("NO TEST")
 
     def test_car_exited_too_soon_violation(self):
         """  
         test what happen when car exited too son without waiting the gat goes to top
         """
-        pass
+        self.fail("NO TEST")
 
     def test_car_exited_but_gate_not_closing_for_the_next_violation(self):
         """  
         test what happen when first car already exited 
         """
-        pass
+        self.fail("NO TEST")
 
     
