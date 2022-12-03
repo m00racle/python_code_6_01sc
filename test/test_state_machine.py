@@ -339,18 +339,18 @@ class TestSumLast3(unittest.TestCase):
         l.start()
         capture = io.StringIO()
         sys.stdout = capture
-        goal_result = [2, 3, None, 7, 15, 15, None, 12, None]
+        goal_result = [2, 3, 'invalid input', 7, 15, 15, 'invalid input', 12, 'invalid input']
         expected_print = \
             "Start state: (0, 0)\n" + \
             "In: 2 Out: 2 Next State: (0, 2)\n"+\
             "In: 1 Out: 3 Next State: (2, 1)\n"+\
-            "In: a Out: None Next State: (2, 1)\n"+\
+            "In: a Out: invalid input Next State: (2, 1)\n"+\
             "In: 4 Out: 7 Next State: (1, 4)\n"+\
             "In: 10 Out: 15 Next State: (4, 10)\n"+\
             "In: 1 Out: 15 Next State: (10, 1)\n"+\
-            "In: None Out: None Next State: (10, 1)\n"+\
+            "In: None Out: invalid input Next State: (10, 1)\n"+\
             "In: 1 Out: 12 Next State: (1, 1)\n"+\
-            "In: True Out: None Next State: (1, 1)\n"
+            "In: True Out: invalid input Next State: (1, 1)\n"
         
         # action
         result = l.transduce([2, 1, 'a', 4, 10, 1, None, 1, True], verbose = True)

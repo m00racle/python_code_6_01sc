@@ -313,3 +313,12 @@ class SumLast3(SM):
         fn = lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input'))
         fo = lambda s,i : s[0] + s[1] + i
         return super().getNextValues(state, inp, fn, fo, efn, efo)
+
+    def foErr(self, s, i, e, msg=None):
+        """  
+        If the input is invalid then the ouput must returns error message
+        error custom message must be put in args[0] (first argument in args*)
+        of any type of Errors
+        """
+        msg = e.args[0]
+        return super().foErr(s, i, e, msg)
