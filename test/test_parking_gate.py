@@ -58,7 +58,7 @@ class TestFreeGate(unittest.TestCase):
         self.assertEqual(result, outputs, "OUTPUT LIST INCORRECT")
         self.assertEqual(cap.getvalue(), printout, "VERBOSE INCORRECT")
 
-    def test_car_coming_to_gate_not_braking_violation(self):
+    def test_car_coming_to_gate_run_off_violation(self):
         """  
         test what happen when car just ran over the gate
         """
@@ -69,7 +69,19 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Run Over" in e.args[0])
+        self.assertTrue("Run Over" in e.exception.args[0], "FAIL DETECT BRAKE AND RUN OFF")
+
+        # RESET THE GATE
+        self.gate.start()
+        # SCENARIO: car just run trough the gate
+        inputs = [('bottom', False, False), ('bottom', False, True)]
+
+        # assert 
+        with self.assertRaises(Exception) as e:
+            self.gate.transduce(inputs)
+        
+        self.assertTrue("Run Over" in e.exception.args[0], "FAIL DETECT FULL SPEED RUN OFF")
+
         
 
     def test_car_exited_too_soon_violation(self):
@@ -83,13 +95,13 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Too Soon" in e.args[0])
+        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON LIFT")
+
+        # SCENARIO: car exit while gate is lowering:
+        inputs = [('bottom', False, False), ('middle', True, False), ('top', True, False), ('top', True, True), ('middle', True, False), ('middle', True, True)]
         
-
-    def car_exited_but_gate_not_closing_for_the_next_violation(self):
-        """  
-        test what happen when first car already exited 
-        """
-        self.fail("NO TEST")
-
-    
+        # assert 
+        with self.assertRaises(Exception) as e:
+            self.gate.transduce(inputs)
+        
+        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON DROP")
