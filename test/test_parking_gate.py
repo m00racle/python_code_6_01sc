@@ -95,13 +95,13 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Too Soon" in e.exception.args[0])
+        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON LIFT")
+
+        # SCENARIO: car exit while gate is lowering:
+        inputs = [('bottom', False, False), ('middle', True, False), ('top', True, False), ('top', True, True), ('middle', True, False), ('middle', True, True)]
         
-
-    def car_exited_but_gate_not_closing_for_the_next_violation(self):
-        """  
-        test what happen when first car already exited 
-        """
-        self.fail("NO TEST")
-
-    
+        # assert 
+        with self.assertRaises(Exception) as e:
+            self.gate.transduce(inputs)
+        
+        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON DROP")

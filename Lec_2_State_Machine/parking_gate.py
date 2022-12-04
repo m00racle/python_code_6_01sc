@@ -37,6 +37,9 @@ class FreeGate(SM):
             raise TooSoonViolation('Too Soon')
         elif state == 'raised' and carOut:
             return 'lowering'
+        # detecting too soon violation while drop
+        elif state == 'lowering' and gatePos == 'middle' and carOut:
+            raise TooSoonViolation('Too Soon')
         elif state == 'lowering' and gatePos == 'bottom' :
             return 'waiting'
         else:
