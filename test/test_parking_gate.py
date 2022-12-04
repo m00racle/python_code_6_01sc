@@ -69,7 +69,7 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Run Over" in e.exception.args[0], "FAIL DETECT BRAKE AND RUN OFF")
+        self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
 
         # RESET THE GATE
         self.gate.start()
@@ -80,7 +80,7 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Run Over" in e.exception.args[0], "FAIL DETECT FULL SPEED RUN OFF")
+        self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
 
         
 
@@ -95,7 +95,7 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON LIFT")
+        self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
 
         # SCENARIO: car exit while gate is lowering:
         inputs = [('bottom', False, False), ('middle', True, False), ('top', True, False), ('top', True, True), ('middle', True, False), ('middle', True, True)]
@@ -104,4 +104,4 @@ class TestFreeGate(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.gate.transduce(inputs)
         
-        self.assertTrue("Too Soon" in e.exception.args[0], "FAIL DETECT: TOO SOON DROP")
+        self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
