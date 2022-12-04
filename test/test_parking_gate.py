@@ -58,19 +58,35 @@ class TestFreeGate(unittest.TestCase):
         self.assertEqual(result, outputs, "OUTPUT LIST INCORRECT")
         self.assertEqual(cap.getvalue(), printout, "VERBOSE INCORRECT")
 
-    def teat_car_coming_to_gate_not_braking_violation(self):
+    def test_car_coming_to_gate_not_braking_violation(self):
         """  
         test what happen when car just ran over the gate
         """
-        self.fail("NO TEST")
+        # SCENARIO: car just run trough the gate
+        inputs = [('bottom', False, False), ('bottom', True, False), ('bottom', False, True)]
+
+        # assert 
+        with self.assertRaises(Exception) as e:
+            self.gate.transduce(inputs)
+        
+        self.assertTrue("Run Over" in e.args[0])
+        
 
     def test_car_exited_too_soon_violation(self):
         """  
         test what happen when car exited too son without waiting the gat goes to top
         """
-        self.fail("NO TEST")
+         # SCENARIO: car exit too son hit the gate:
+        inputs = [('bottom', False, False), ('middle', True, False), ('middle', False, True)]
 
-    def test_car_exited_but_gate_not_closing_for_the_next_violation(self):
+        # assert 
+        with self.assertRaises(Exception) as e:
+            self.gate.transduce(inputs)
+        
+        self.assertTrue("Too Soon" in e.args[0])
+        
+
+    def car_exited_but_gate_not_closing_for_the_next_violation(self):
         """  
         test what happen when first car already exited 
         """
