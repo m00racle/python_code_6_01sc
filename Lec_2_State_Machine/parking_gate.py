@@ -21,16 +21,23 @@ class FreeGate(SM):
             if state == 'lowering' and gatePos == 'middle' and carOut : raise TooSoonViolation('ALERT! too soon')
 
             # determine next state:
-            if state == 'waiting' and carIn:
-                nextState = 'raising'
-            elif state == 'raising' and gatePos == 'top':
-                nextState = 'raised'
-            elif state == 'raised' and carOut:
-                nextState = 'lowering'
-            elif state == 'lowering' and gatePos == 'bottom' :
-                nextState = 'waiting'
+            if state != 'halt' :
+                if state == 'waiting' and carIn:
+                    nextState = 'raising'
+                elif state == 'raising' and gatePos == 'top':
+                    nextState = 'raised'
+                elif state == 'raised' and carOut:
+                    nextState = 'lowering'
+                elif state == 'lowering' and gatePos == 'bottom' :
+                    nextState = 'waiting'
+                else:
+                    nextState = state
             else:
-                nextState = state
+                if gatePos == 'restart':
+                    self.start()
+                    nextState = self.state
+                else:
+                    raise RuntimeError(self.log['ex_msg'])
 
             # determine the ouput:
             if nextState == 'raising' :

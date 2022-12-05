@@ -62,7 +62,8 @@ class SM:
             (s, o) = self.getNextValues(self.state, inp)
             
             print(f"In: {inp} Out: {o} Next State: {s}")
-            result.append(self.step(inp))
+            result.append(o)
+            self.state = s
         
         return result
 
@@ -131,6 +132,7 @@ class SM:
         OVERRIDE function for custom output error handling
         NOTE: for user defined exception will be caught with default except thus it return args[0]
         """
+        self.log['ex_msg'] = err.args[0]
         try:
             raise err
         except TypeError:

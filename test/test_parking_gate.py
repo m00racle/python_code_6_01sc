@@ -113,3 +113,45 @@ class TestFreeGate(unittest.TestCase):
         # self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
         self.assertEqual(self.gate.transduce(inputs), ['nop', 'lift', 'lift', 'nop', 'drop', 'ALERT! too soon'])
         self.assertEqual(self.gate.getState(), 'halt', "Violation state is wrong")
+
+    def test_verbose_violations(self):
+        """  
+        test as amy violation as possible
+        """
+        # arrange
+        inputs = [('bottom', False, True), ('bottom', True, False), ('restart', False, False), ('bottom', True, False), ('middle', True, False), ('middle', True, False), ('top', True, False), ('top', True, False), ('top', True, False), ('top', True, True), ('top', True, True), ('top', True, False), ('middle', False, True), ('middle', True, False), ('restart', True, False), ('middle', True, False), ('top', True, False)]
+
+        outputs = ['ALERT! run off', 'ALERT! run off', 'nop', 'lift', 'lift', 'lift', 'nop', 'nop', 'nop', 'drop', 'drop', 'drop', 'ALERT! too soon', 'ALERT! too soon', 'nop', 'lift', 'nop']
+
+        printout = \
+            "Start state: waiting\n" +\
+            "In: ('bottom', False, True) Out: ALERT! run off Next State: halt\n" +\
+            "In: ('bottom', True, False) Out: ALERT! run off Next State: halt\n" +\
+            "In: ('restart', False, False) Out: nop Next State: waiting\n" +\
+            "In: ('bottom', True, False) Out: lift Next State: raising\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
+            "In: ('top', True, False) Out: nop Next State: raised\n" +\
+            "In: ('top', True, False) Out: nop Next State: raised\n" +\
+            "In: ('top', True, False) Out: nop Next State: raised\n" +\
+            "In: ('top', True, True) Out: drop Next State: lowering\n" +\
+            "In: ('top', True, True) Out: drop Next State: lowering\n" +\
+            "In: ('top', True, False) Out: drop Next State: lowering\n" +\
+            "In: ('middle', False, True) Out: ALERT! too soon Next State: halt\n" +\
+            "In: ('middle', True, False) Out: ALERT! too soon Next State: halt\n" +\
+            "In: ('restart', True, False) Out: nop Next State: waiting\n" +\
+            "In: ('middle', True, False) Out: lift Next State: raising\n" +\
+            "In: ('top', True, False) Out: nop Next State: raised\n"
+        
+        cap = io.StringIO()
+        sys.stdout = cap
+
+        # action
+        result = self.gate.transduce(inputs, True)
+        # capture the printed outputs:
+        sys.stdout = sys.__stdout__
+
+        # assert
+        self.assertEqual(result, outputs, "OUTPUT LIST INCORRECT")
+        self.assertEqual(cap.getvalue(), printout, "VERBOSE INCORRECT")
+        
