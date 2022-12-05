@@ -72,7 +72,7 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
+    def getNextValues(self, state, inp, **kwargs)->tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
@@ -85,6 +85,20 @@ class SM:
         NOTE: retaining previous valid state will prepare the SM to handle the next valid input
         efo = o(s,i) custom function invoked when exception raised passing last valid state and input to return output
         """
+        defs = {
+            'fn' : lambda s,i : None,
+            'fo' : lambda s,i : None,
+            'efo' : None,
+            'efn' : None,
+        }
+
+        for k in kwargs:
+            if k in defs: defs[k] = kwargs[k]
+        
+        efn = defs['efn']
+        efo = defs['efo']
+        fn = defs['fn']
+        fo = defs['fo']
         try:
             return(fn(state, inp), fo(state, inp))
         except Exception as e:
@@ -152,10 +166,10 @@ class Accumulator(SM):
     efo(s,i) = None
     """
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fo = fn = lambda s,i : s + i
+    def getNextValues(self, state, inp)->tuple:
         
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+        # get the kwargs directly
+        return super().getNextValues(state, inp, fn = lambda s,i : s + i, fo = lambda s,i : s + i)
     
         
     
