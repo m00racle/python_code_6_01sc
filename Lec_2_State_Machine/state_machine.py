@@ -188,13 +188,12 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        # I put the constan self.k directly to the function
-        # n(s,i) = k * i
-        # o(s,i) = k * i
-        fo = fn = lambda s,i : self.k * i
-        
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : self.k * i,
+            'fo' : lambda s,i : self.k * i
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
     def fnErr(self, state, inp, err):
         state = 0
