@@ -66,10 +66,12 @@ class TestFreeGate(unittest.TestCase):
         inputs = [('bottom', False, False), ('bottom', True, False), ('bottom', False, True)]
 
         # assert 
-        with self.assertRaises(Exception) as e:
-            self.gate.transduce(inputs)
+        # with self.assertRaises(Exception) as e:
+        #     self.gate.transduce(inputs)
         
-        self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
+        # self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
+        self.assertTrue(self.gate.transduce(inputs), ['nop', 'lift', 'ALERT! run off'])
+        self.assertEqual(self.gate.getState(), 'halt', "Violation state is wrong")
 
         # RESET THE GATE
         self.gate.start()
@@ -77,10 +79,12 @@ class TestFreeGate(unittest.TestCase):
         inputs = [('bottom', False, False), ('bottom', False, True)]
 
         # assert 
-        with self.assertRaises(Exception) as e:
-            self.gate.transduce(inputs)
+        # with self.assertRaises(Exception) as e:
+        #     self.gate.transduce(inputs)
         
-        self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
+        # self.assertTrue(type(e.exception) is pg.RunOverViolation, "TYPE OF EXCEPTION IS WRONG")
+        self.assertEqual(self.gate.transduce(inputs), ['nop', 'ALERT! run off'])
+        self.assertEqual(self.gate.getState(), 'halt', "Violation state is wrong")
 
         
 
@@ -89,19 +93,23 @@ class TestFreeGate(unittest.TestCase):
         test what happen when car exited too son without waiting the gat goes to top
         """
          # SCENARIO: car exit too son hit the gate:
-        inputs = [('bottom', False, False), ('middle', True, False), ('middle', False, True)]
+        inputs = [('bottom', False, False), ('bottom', True, False), ('middle', False, True)]
 
         # assert 
-        with self.assertRaises(Exception) as e:
-            self.gate.transduce(inputs)
+        # with self.assertRaises(Exception) as e:
+        #     self.gate.transduce(inputs)
         
-        self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
+        # self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
+        self.assertEqual(self.gate.transduce(inputs), ['nop', 'lift', 'ALERT! too soon'])
+        self.assertEqual(self.gate.getState(), 'halt', "Violation state is wrong")
 
         # SCENARIO: car exit while gate is lowering:
-        inputs = [('bottom', False, False), ('middle', True, False), ('top', True, False), ('top', True, True), ('middle', True, False), ('middle', True, True)]
+        inputs = [('bottom', False, False), ('bottom', True, False), ('middle', True, False), ('top', True, False), ('top', True, True), ('middle', False, True)]
         
-        # assert 
-        with self.assertRaises(Exception) as e:
-            self.gate.transduce(inputs)
+        # # assert 
+        # with self.assertRaises(Exception) as e:
+        #     self.gate.transduce(inputs)
         
-        self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
+        # self.assertTrue(type(e.exception) is pg.TooSoonViolation, "TYPE OF EXCEPTION IS FALSE")
+        self.assertEqual(self.gate.transduce(inputs), ['nop', 'lift', 'lift', 'nop', 'drop', 'ALERT! too soon'])
+        self.assertEqual(self.gate.getState(), 'halt', "Violation state is wrong")
