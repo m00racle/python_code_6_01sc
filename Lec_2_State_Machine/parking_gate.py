@@ -11,7 +11,7 @@ class FreeGate(SM):
         """
         super().__init__('waiting')
 
-    def generateOuput(self, nextState, inp):
+    def generateOuput(self, nextState):
         # nextState = self.generateState(state, inp)
         if nextState == 'raising' :
             return 'lift'
@@ -45,11 +45,19 @@ class FreeGate(SM):
         else:
             return state
     
-    def getNextValues(self, state, inp, fn=..., fo=..., efn=None, efo=None) -> tuple:
+    # def getNextValues(self, state, inp, fn=..., fo=..., efn=None, efo=None) -> tuple:
+    #     nextState = self.generateState(state, inp)
+    #     fn = lambda s,i : nextState
+    #     fo = lambda s,i : self.generateOuput(nextState, inp)
+    #     return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
         nextState = self.generateState(state, inp)
-        fn = lambda s,i : nextState
-        fo = lambda s,i : self.generateOuput(nextState, inp)
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+        output = self.generateOuput(nextState)
+        kwargs = {
+            'fn' : lambda s,i : nextState,
+            'fo' : lambda s,i : output
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
 class RunOverViolation(Exception):
     """  
