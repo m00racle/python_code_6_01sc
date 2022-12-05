@@ -16,10 +16,10 @@ class FreeGate(SM):
         try :
             gatePos, carIn, carOut = inp
             # detect violations
-            if state == 'waiting' and carOut : raise RunOverViolation('halt')
-            if state == 'raising' and gatePos == 'bottom' and carOut : raise RunOverViolation('halt')
-            if state == 'raising' and gatePos == 'middle' and carOut : raise TooSoonViolation('halt')
-            if state == 'lowering' and gatePos == 'middle' and carOut : raise TooSoonViolation('halt')
+            if state == 'waiting' and carOut : raise RunOverViolation('ALERT! run off')
+            if state == 'raising' and gatePos == 'bottom' and carOut : raise RunOverViolation('ALERT! run off')
+            if state == 'raising' and gatePos == 'middle' and carOut : raise TooSoonViolation('ALERT! too soon')
+            if state == 'lowering' and gatePos == 'middle' and carOut : raise TooSoonViolation('ALERT! too soon')
 
             # determine next state:
             if state == 'waiting' and carIn:
@@ -44,6 +44,10 @@ class FreeGate(SM):
             return (nextState, output)
         except Exception as e:
             return(self.fnErr(state, inp, e), self.foErr(state, inp, e))
+
+    def fnErr(self, state, inp, err):
+        state = 'halt'
+        return super().fnErr(state, inp, err)
         
 
 class RunOverViolation(Exception):
