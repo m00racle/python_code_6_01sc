@@ -14,7 +14,7 @@ class Cascade(SM):
         self.log = {}
 
     def transduce(self, inps, verbose=False):
-        return self.m2.transduce(self.m1.transduce(inps))
+        return self.m2.transduce(self.m1.transduce(inps, verbose), verbose)
 
 class Increment(SM):
     """  
@@ -44,3 +44,16 @@ class Increment(SM):
             'fo' : lambda s, i : self.safeAdd(inp, self.incr)
         }
         return super().getNextValues(state, inp, **kwargs)
+
+# def main()->None:
+#     """  
+#     main run platform for 6-01sc
+#     """
+#     inputs1 = [3.5, 4, True, 200, 3]
+#     foo1 = Cascade(Delay(100), Increment(1))
+#     foo2 = Cascade(Increment(1), Delay(100))
+#     print(f'foo1 = {foo1.transduce(inputs1)}')
+#     print(f'foo2 = {foo2.transduce(inputs1)}')
+
+# if __name__ == '__main__':
+#     main()
