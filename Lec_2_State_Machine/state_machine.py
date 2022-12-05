@@ -72,7 +72,7 @@ class SM:
         """
         return self.transduce([None] * n)
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
+    def getNextValues(self, state, inp, **kwargs)->tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
@@ -85,6 +85,20 @@ class SM:
         NOTE: retaining previous valid state will prepare the SM to handle the next valid input
         efo = o(s,i) custom function invoked when exception raised passing last valid state and input to return output
         """
+        defs = {
+            'fn' : lambda s,i : None,
+            'fo' : lambda s,i : None,
+            'efo' : None,
+            'efn' : None,
+        }
+
+        for k in kwargs:
+            if k in defs: defs[k] = kwargs[k]
+        
+        efn = defs['efn']
+        efo = defs['efo']
+        fn = defs['fn']
+        fo = defs['fo']
         try:
             return(fn(state, inp), fo(state, inp))
         except Exception as e:
@@ -152,10 +166,10 @@ class Accumulator(SM):
     efo(s,i) = None
     """
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fo = fn = lambda s,i : s + i
+    def getNextValues(self, state, inp)->tuple:
         
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+        # get the kwargs directly
+        return super().getNextValues(state, inp, fn = lambda s,i : s + i, fo = lambda s,i : s + i)
     
         
     
@@ -174,13 +188,12 @@ class Gain(SM):
         super().__init__(initVal)
         self.k = initVal
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        # I put the constan self.k directly to the function
-        # n(s,i) = k * i
-        # o(s,i) = k * i
-        fo = fn = lambda s,i : self.k * i
-        
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : self.k * i,
+            'fo' : lambda s,i : self.k * i
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
     def fnErr(self, state, inp, err):
         state = 0
@@ -205,23 +218,13 @@ class Average2(SM):
     def __init__(self) -> None:
         # the startState is always 0
         super().__init__(0)
-
-
-    # def getNextValues(self, state, inp, definp=0, fn = lambda s,i : None, fo = lambda s,i : None) -> tuple:
-    #     try:
-    #         fn = lambda s,i : i
-    #         fo = lambda s,i : (s + i) / 2
-    #         return super().getNextValues(state, inp, definp, fn, fo)
-    #     except TypeError:
-    #         fn = lambda s,i : 0
-    #         fo = lambda s,i : 0
-    #         return super().getNextValues(state, inp, definp, fn, fo)
     
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fn = lambda s,i : i
-        fo = lambda s,i : (s + i) / 2
-        
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : i,
+            'fo' : lambda s,i : (s + i) / 2
+        }
+        return super().getNextValues(state, inp, **kwargs)
     
 class ABC(SM):
     """  
@@ -248,11 +251,14 @@ class ABC(SM):
     def __init__(self) -> None:
         super().__init__(0)
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        efn = fn = lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3
-        efo = fo = lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False
-        
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : 1 if s==0 and i=='a' else 2 if s==1 and i=='b' else 0 if s==2 and i=='c' else 3,
+            'fo' : lambda s,i : True if s==0 and i=='a' or s==1 and i=='b' or s==2 and i=='c' else False,
+            'efn' : 'fn',
+            'efo' : 'fo'
+        }
+        return super().getNextValues(state, inp, **kwargs)
     
 class UpDown(SM):
     """  
@@ -272,13 +278,14 @@ class UpDown(SM):
     efo(s,i) = None (the output is None in error)
     """
 
-    # : define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(RuntimeError(None))
-        # NOTE: I use run time error to cover for both Type error like passing None of True False 
-        # and wrong string 
-        
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    #fo = fn = lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(RuntimeError(None))
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(RuntimeError(None)),
+            'fo' : lambda s,i : s + 1 if i == 'u' else s - 1 if i == 'd' else self.throw(RuntimeError(None))
+            # BUG: why this can't just use 'fo' : 'fn' ? While the ABC can?? maybe throw??
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
 class Delay(SM):
     """  
@@ -291,11 +298,13 @@ class Delay(SM):
     fn(s,i) = i
     fo(s,i) = s
     """
-    # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fn = lambda s,i : i
-        fo = lambda s,i : s
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : i,
+            'fo' : lambda s,i : s
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
 class SumLast3(SM):
     """  
@@ -319,13 +328,12 @@ class SumLast3(SM):
         """
         super().__init__((0, 0))
 
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        """  
-        get the next state and current output based on specification
-        """
-        fn = lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input'))
-        fo = lambda s,i : s[0] + s[1] + i
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input')), 
+            'fo' : lambda s,i : s[0] + s[1] + i
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
     def foErr(self, s, i, e, msg=None):
         """  
