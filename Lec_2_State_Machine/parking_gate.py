@@ -40,11 +40,7 @@ class FreeGate(SM):
             else :
                 output = 'nop'
             
-            kwargs = {
-                'fn' : lambda s,i : nextState,
-                'fo' : lambda s,i : output
-            }
-            return super().getNextValues(state, inp, **kwargs)
+            return (nextState, output)
         except Exception as e:
             # NOTE: because the raise exception is not inside the fn and fo then it means it can't be handled in superclass
             # thus we need to handle exception here but I still can use the super foErr function
