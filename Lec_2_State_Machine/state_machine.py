@@ -298,11 +298,13 @@ class Delay(SM):
     fn(s,i) = i
     fo(s,i) = s
     """
-    # TODO: define and test getNextValues according to the new standard
-    def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-        fn = lambda s,i : i
-        fo = lambda s,i : s
-        return super().getNextValues(state, inp, fn, fo, efn, efo)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s,i : i,
+            'fo' : lambda s,i : s
+        }
+        return super().getNextValues(state, inp, **kwargs)
 
 class SumLast3(SM):
     """  
@@ -326,13 +328,6 @@ class SumLast3(SM):
         """
         super().__init__((0, 0))
 
-    # def getNextValues(self, state, inp, fn=lambda s,i : None, fo=lambda s,i : None, efn=None, efo=None)->tuple:
-    #     """  
-    #     get the next state and current output based on specification
-    #     """
-    #     fn = lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input'))
-    #     fo = lambda s,i : s[0] + s[1] + i
-    #     return super().getNextValues(state, inp, fn, fo, efn, efo)
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         kwargs = {
             'fn' : lambda s,i : (s[1], i) if type(i) is int or type(i) is float else self.throw(TypeError('invalid input')), 
