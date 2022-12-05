@@ -24,3 +24,31 @@ class TestCascasdeClass(unittest.TestCase):
         # assert
         # self.fail('NO TEST')
         self.assertEqual(casc.transduce(inputs), expected_outputs)
+
+class TestIncrementClass(unittest.TestCase):
+    """  
+    testing Increment class
+    both safe and unsafe
+    """
+    def test_increment_numbers_valid(self):
+        """  
+        test the increment with valid int and float
+        """
+        # arrange
+        inputs = [3.5, 8, 2.1, 4, 65]
+        incr = 2
+        expected_outputs = [5.5, 10, 4.1, 6, 67]
+
+        # action
+        inc = c.Increment(incr)
+        self.assertEqual(inc.transduce(inputs), expected_outputs)
+        
+    def test_increment_non_numbers(self):
+        inputs = [2.2, True, None, 'a', 9]
+        k = 2.5
+        expected_outputs = [4.7, None, None, None, 11.5]
+
+        # action
+        inc = c.Increment(k)
+        # assert
+        self.assertEqual(inc.transduce(inputs), expected_outputs)
