@@ -23,7 +23,7 @@ class TestParallel(unittest.TestCase):
         sm1 = Accumulator(5)
         sm2 = Average2()
         inputs = [2,5,-9,100]
-        expected_outputs = [(7.0, 1.0), (12.0, 3.5), (3.0, -2.0), (103.0, 49.0)]
+        expected_outputs = [(7, 1.0), (12, 3.5), (3, -2.0), (103, 45.5)]
 
         # preps the instance 
         p = Parallel(sm1, sm2)
@@ -74,8 +74,9 @@ class TestParallel(unittest.TestCase):
         # we expect printed output
         # print(f"In: {inp} Out: {o} Next State: {s}")
         should_print = \
+            "Start state: (0, 10)\n" +\
             "In: 1 Out: (1, None) Next State: (1, 10)\n" +\
-            "In: u OUt: (None, 11) Next State: (1, 11)\n" +\
+            "In: u Out: (None, 11) Next State: (1, 11)\n" +\
             "In: 5 Out: (6, None) Next State: (6, 11)\n" +\
             "In: 6 Out: (12, None) Next State: (12, 11)\n" +\
             "In: u Out: (None, 12) Next State: (12, 12)\n" +\
