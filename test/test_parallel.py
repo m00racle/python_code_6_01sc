@@ -95,3 +95,25 @@ class TestParallel(unittest.TestCase):
         # assert:
         self.assertEqual(result, expected_result, "THE OUTPUT INCORRECT")
         self.assertEqual(printed_out, should_print, "PRINTED OUT INCORRECT")
+
+class TestParallel2(unittest.TestCase):
+    """  
+    Test cases for class Parallel2 State Machine
+    """
+    def test_using_normal_inputs_transduce_output_only(self):
+        """  
+        This will use valid inputs
+        """
+        self.fail("NO TEST")
+    
+    def test_tansduce_verbose_valid_inputs(self):
+        """  
+        Verbose transduce which will also test the states for each input
+        """
+        self.fail("NO TEST")
+    
+    def test_tansduce_verbose_invalid_inputs(self):
+        """  
+        test transduce with invalid inputs for each or both of the state machine
+        """
+        self.fail("NO TEST")
