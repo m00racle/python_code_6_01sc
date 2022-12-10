@@ -99,7 +99,25 @@ class TestParallel(unittest.TestCase):
 class TestParallel2(unittest.TestCase):
     """  
     Test cases for class Parallel2 State Machine
+    In this case there will be one important function called splitValue
+    I think splitValue required modes:
+    if the inputs are serial, tuples and so on.
     """
+    def test_combining_two_inputs(self):
+        """  
+        TODO: find a scenario that can be test the inputs when passed as __init__
+        the inputs passed for arguments will be two separate list
+        Then in the init it should be combined to form valid inputs for the SM.
+        TODO: find a way to know the input?? Maybe using transduce verbose?? IT IS ALWAYS GOOD FOR TEST
+        """
+        self.fail("NO TEST")
+
+    def test_split_value_function_verify_correct_pair(self):
+        """  
+        split_value function will pass the input that was pair (tuple or list)
+        """
+        self.fail("NO TEST")
+
     def test_using_normal_inputs_transduce_output_only(self):
         """  
         This will use valid inputs
