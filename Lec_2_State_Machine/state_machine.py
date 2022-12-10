@@ -180,15 +180,15 @@ class Gain(SM):
     Gain State machine:
     fn(s,i) = k * i 
     fo(s,i) = k * i
-    startState : user determined
+    startState : 0
 
     errror handling function:
     efo(s,i) = efn(s,i) = 0
     """
    
-    def __init__(self, initVal=0) -> None:
-        super().__init__(initVal)
-        self.k = initVal
+    def __init__(self, k) -> None:
+        super().__init__(0)
+        self.k = k
     
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         kwargs = {

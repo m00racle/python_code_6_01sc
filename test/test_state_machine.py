@@ -77,7 +77,7 @@ class TestGainClass(unittest.TestCase):
         capOout = io.StringIO()
         sys.stdout = capOout
         printed = \
-                "Start state: 3\n" + \
+                "Start state: 0\n" + \
                 "In: 1.1 Out: 3.3000000000000003 Next State: 3.3000000000000003\n" + \
                 "In: -2 Out: -6 Next State: -6\n" + \
                 "In: 100 Out: 300 Next State: 300\n" + \
