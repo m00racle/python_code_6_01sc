@@ -47,7 +47,7 @@ class Parallel(SM):
         (next_s2, o2) = self.sm2.getNextValues(s2, inp)
         return ((next_s1, next_s2), (o1, o2))
 
-class Parallel2(SM):
+class Parallel2(Parallel):
     """  
     Class Parallel with 2 inputs and 2 outputs
     S = {Any}

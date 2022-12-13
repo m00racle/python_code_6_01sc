@@ -6,7 +6,7 @@ code_dir = os.path.normpath(test_dir + "/../Lec_2_State_Machine")
 
 sys.path.append(code_dir)
 
-from parallel import Parallel
+from parallel import Parallel, Parallel2
 from state_machine import Accumulator, Average2, UpDown
 
 class TestParallel(unittest.TestCase):
@@ -110,13 +110,63 @@ class TestParallel2(unittest.TestCase):
         Then in the init it should be combined to form valid inputs for the SM.
         TODO: find a way to know the input?? Maybe using transduce verbose?? IT IS ALWAYS GOOD FOR TEST
         """
-        self.fail("NO TEST")
+        sm1 = Accumulator()
+        inp_1 = [1,5,7,13,15]
+        sm2  = UpDown(5)
+        inp_2 = ['d', 'u', 'u']
+        p2 = Parallel2(sm1, sm2)
+        expected_print = \
+            "Start state: (0, 5)\n" +\
+            "In: (1, 'd') Out: (1, 4) Next State: (1, 4)\n" +\
+            "In: (5, 'u') Out: (6, 5) Next State: (6, 5)\n" +\
+            "In: (7, 'u') Out: (13, 6) Next State: (13, 6)\n" +\
+            "In: (13, None) Out: (26, None) Next State: (26, 6)\n" +\
+            "In: (15, None) Out: (41, None) Next State: (41, 6)\n" 
+        must_result = [(1,4), (6,5), (13,6), (26, None), (41, None)]
+        # preps to catch the printed output:
+        r = io.StringIO()
+        sys.stdout = r
+        
+        # action:
+        result = p2.transduce(inp_1, inp_2, verbose=True)
+        sys.stdout = sys.__stdout__
+        printed_out = r.getvalue()
+
+        # assert
+        self.assertEqual(result, must_result, "output is wrong")
+        self.assertEqual(printed_out, expected_print, "print out is wrong")
 
     def test_split_value_function_verify_correct_pair(self):
         """  
         split_value function will pass the input that was pair (tuple or list)
         """
-        self.fail("NO TEST")
+        sm1 = Accumulator()
+        
+        sm2  = UpDown(5)
+        
+        inputs = [(1,'d'), (5, 'u'), (7, 'u'), (13, None), (15, None)]
+        p2 = Parallel2(sm1, sm2)
+        expected_print = \
+            "Start state: (0, 5)\n" +\
+            "In: (1, 'd') Out: (1, 4) Next State: (1, 4)\n" +\
+            "In: (5, 'u') Out: (6, 5) Next State: (6, 5)\n" +\
+            "In: (7, 'u') Out: (13, 6) Next State: (13, 6)\n" +\
+            "In: (13, None) Out: (26, None) Next State: (26, 6)\n" +\
+            "In: (15, None) Out: (41, None) Next State: (41, 6)\n" 
+        must_result = [(1,4), (6,5), (13,6), (26, None), (41, None)]
+        # preps to catch the printed output:
+        r = io.StringIO()
+        sys.stdout = r
+        
+        # action:
+        result = p2.transduce(inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        printed_out = r.getvalue()
+
+        # assert
+        self.assertEqual(result, must_result, "output is wrong")
+        self.assertEqual(printed_out, expected_print, "print out is wrong")
+        
 
     def test_using_normal_inputs_transduce_output_only(self):
         """  
