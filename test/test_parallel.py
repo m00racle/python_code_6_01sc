@@ -168,10 +168,37 @@ class TestParallel2(unittest.TestCase):
         self.assertEqual(printed_out, expected_print, "print out is wrong")
         
 
-    def test_using_normal_inputs_transduce_output_only(self):
+    def test_using_serial_inputs_transduce_correct_print_out(self):
         """  
-        This will use valid inputs
+        This will use valid inputs but in series
+        should be able to still separate them
         """
+        sm1 = Accumulator()
+        
+        sm2  = UpDown(5)
+        
+        inputs = [1,'d', 5, 'u', 7, 'u', 13, None, 15, None]
+        p2 = Parallel2(sm1, sm2)
+        expected_print = \
+            "Start state: (0, 5)\n" +\
+            "In: (1, 'd') Out: (1, 4) Next State: (1, 4)\n" +\
+            "In: (5, 'u') Out: (6, 5) Next State: (6, 5)\n" +\
+            "In: (7, 'u') Out: (13, 6) Next State: (13, 6)\n" +\
+            "In: (13, None) Out: (26, None) Next State: (26, 6)\n" +\
+            "In: (15, None) Out: (41, None) Next State: (41, 6)\n" 
+        must_result = [(1,4), (6,5), (13,6), (26, None), (41, None)]
+        # preps to catch the printed output:
+        r = io.StringIO()
+        sys.stdout = r
+        
+        # action:
+        result = p2.transduce(inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        printed_out = r.getvalue()
+
+        # assert
+        self.assertEqual(result, must_result, "output is wrong")
+        self.assertEqual(printed_out, expected_print, "print out is wrong")
         self.fail("NO TEST")
     
     def test_tansduce_verbose_valid_inputs(self):
