@@ -205,4 +205,30 @@ class TestParallel2(unittest.TestCase):
         """  
         test transduce with invalid inputs for each or both of the state machine
         """
+        sm1 = Accumulator()
+        
+        sm2  = UpDown(5)
+        
+        inputs = [(1,'d'), (5, 'u'), 'undefined', (13), ('undefined', None)]
+        p2 = Parallel2(sm1, sm2)
+        expected_print = \
+            "Start state: (0, 5)\n" +\
+            "In: (1, 'd') Out: (1, 4) Next State: (1, 4)\n" +\
+            "In: (5, 'u') Out: (6, 5) Next State: (6, 5)\n" +\
+            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
+            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
+            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" 
+        must_result = [(1,4), (6,5), ('undefined', 'undefined'), ('undefined', 'undefined'), ('undefined', 'undefined')]
+        # preps to catch the printed output:
+        r = io.StringIO()
+        sys.stdout = r
+        
+        # action:
+        result = p2.transduce(inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        printed_out = r.getvalue()
+
+        # assert
+        self.assertEqual(result, must_result, "output is wrong")
+        self.assertEqual(printed_out, expected_print, "print out is wrong")
         self.fail("NO TEST")
