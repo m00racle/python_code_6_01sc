@@ -103,8 +103,9 @@ class TestParallel2(unittest.TestCase):
     I think splitValue required modes:
     if the inputs are serial, tuples and so on.
     """
-    def test_combining_two_inputs(self):
+    def proposed_test_combining_two_inputs(self):
         """  
+        PROPOSED (PENDING DESIGN FOR FUTURE DEVS)
         TODO: find a scenario that can be test the inputs when passed as __init__
         the inputs passed for arguments will be two separate list
         Then in the init it should be combined to form valid inputs for the SM.
@@ -135,6 +136,7 @@ class TestParallel2(unittest.TestCase):
         # assert
         self.assertEqual(result, must_result, "output is wrong")
         self.assertEqual(printed_out, expected_print, "print out is wrong")
+
 
     def test_split_value_function_verify_correct_pair(self):
         """  
@@ -168,8 +170,9 @@ class TestParallel2(unittest.TestCase):
         self.assertEqual(printed_out, expected_print, "print out is wrong")
         
 
-    def test_using_serial_inputs_transduce_correct_print_out(self):
+    def proposed_test_using_serial_inputs_transduce_correct_print_out(self):
         """  
+        PORPOSED: PENDING FOR FUTURE DEVS
         This will use valid inputs but in series
         should be able to still separate them
         """
@@ -199,25 +202,27 @@ class TestParallel2(unittest.TestCase):
         # assert
         self.assertEqual(result, must_result, "output is wrong")
         self.assertEqual(printed_out, expected_print, "print out is wrong")
-        self.fail("NO TEST")
+        
     
-    def transduce_verbose_invalid_inputs(self):
+    def test_transduce_verbose_invalid_inputs_retains_state_returns_undefined(self):
         """  
         test transduce with invalid inputs for each or both of the state machine
+        inputs to be valid through splitValue function if it is NOT 'undefined' 
+        then it must be a tuple with len(tuple) == 2 (exactly 2 no more no less)
         """
         sm1 = Accumulator()
         
         sm2  = UpDown(5)
         
-        inputs = [(1,'d'), (5, 'u'), 'undefined', (13), ('undefined', None)]
+        inputs = [(1,'d'), (5, 'u'), 'undefined', ('undefined', None), (13,)]
         p2 = Parallel2(sm1, sm2)
         expected_print = \
             "Start state: (0, 5)\n" +\
             "In: (1, 'd') Out: (1, 4) Next State: (1, 4)\n" +\
             "In: (5, 'u') Out: (6, 5) Next State: (6, 5)\n" +\
-            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
-            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
-            "In: ('undefined', 'undefined') Out: ('undefined', 'undefined') Next State: (6, 5)\n" 
+            "In: undefined Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
+            "In: ('undefined', None) Out: ('undefined', 'undefined') Next State: (6, 5)\n" +\
+            "In: (13,) Out: ('undefined', 'undefined') Next State: (6, 5)\n" 
         must_result = [(1,4), (6,5), ('undefined', 'undefined'), ('undefined', 'undefined'), ('undefined', 'undefined')]
         # preps to catch the printed output:
         r = io.StringIO()
@@ -231,4 +236,4 @@ class TestParallel2(unittest.TestCase):
         # assert
         self.assertEqual(result, must_result, "output is wrong")
         self.assertEqual(printed_out, expected_print, "print out is wrong")
-        self.fail("NO TEST")
+        
