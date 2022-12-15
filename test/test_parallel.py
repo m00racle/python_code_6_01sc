@@ -255,8 +255,69 @@ class TestParallelAdd(unittest.TestCase):
         # assert
         self.assertEqual(outputs, expected_outputs, "OUTPUT INCORRECT")
 
-    def proposed_test_invalid_inputs_returns_none_and_retain_state(self):
+    def test_invalid_inputs_returns_none_and_retain_state(self):
         """  
         test case when passing invalid inputs
         """
-        self.fail("NO TEST")
+        """  
+        Test two different SM Accumulator and UpDown
+        the input will be mixed with valid for one SM and invalid to another
+        
+        Accumulator:
+        sub class of SM which implementation is Accumulator State Machine
+        fn(s,i) = s + i
+        fo(s,i) = s + i
+        startState : user defined
+
+        error handling function:
+        efn(s,i) = s
+        efo(s,i) = None
+
+        UpDown:
+        class for Up Down counter State Machine subcalss of SM
+        S = integers
+        I = {u,d}
+        O = integers
+        startState : user defined
+        fn(s,i) =
+            s + 1 if i = u
+            s - 1 if i = d
+        
+        fo(s,i) = fn(s,i)
+
+        error handling function
+        efn(s,i) = s (the state unchanged in error)
+        efo(s,i) = None (the output is None in error)
+
+        I want to verbose output since I want to test the states also
+        """
+        sm1 = Accumulator()
+        sm2 = UpDown(10)
+        p = ParallelAdd(sm1, sm2)
+        inputs = [1,'u', 5, 6,'u', 'd', 'd' ]
+        expected_result = [None, None, None, None, None, None, None]
+        # we expect printed output
+        # print(f"In: {inp} Out: {o} Next State: {s}")
+        should_print = \
+            "Start state: (0, 10)\n" +\
+            "In: 1 Out: None Next State: (0, 10)\n" +\
+            "In: u Out: None Next State: (0, 10)\n" +\
+            "In: 5 Out: None Next State: (0, 10)\n" +\
+            "In: 6 Out: None Next State: (0, 10)\n" +\
+            "In: u Out: None Next State: (0, 10)\n" +\
+            "In: d Out: None Next State: (0, 10)\n" +\
+            "In: d Out: None Next State: (0, 10)\n"
+        
+        # preps to catch the printed output:
+        r = io.StringIO()
+        sys.stdout = r
+        
+        # action:
+        result = p.transduce(inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        printed_out = r.getvalue()
+
+        # assert:
+        self.assertEqual(result, expected_result, "THE OUTPUT INCORRECT")
+        self.assertEqual(printed_out, should_print, "PRINTED OUT INCORRECT")
+        
