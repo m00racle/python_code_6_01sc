@@ -85,3 +85,9 @@ class Parallel2(Parallel):
         (next_s1, o1) = res1
         (next_s2, o2) = res2
         return ((next_s1, next_s2), (o1, o2))
+
+class ParallelAdd(Parallel):
+    """  
+    Similar to the class Parallel but only have single outcomes which is the sum of each SM outputs
+    """
+    

@@ -6,7 +6,7 @@ code_dir = os.path.normpath(test_dir + "/../Lec_2_State_Machine")
 
 sys.path.append(code_dir)
 
-from parallel import Parallel, Parallel2
+from parallel import Parallel, Parallel2, ParallelAdd
 from state_machine import Accumulator, Average2, UpDown
 
 class TestParallel(unittest.TestCase):
@@ -237,3 +237,26 @@ class TestParallel2(unittest.TestCase):
         self.assertEqual(result, must_result, "output is wrong")
         self.assertEqual(printed_out, expected_print, "print out is wrong")
         
+class TestParallelAdd(unittest.TestCase):
+    """  
+    to test the ParallelAdd class.
+    """
+    def test_valid_inputs_returns_valid_outputs(self):
+        sm1 = Accumulator(5)
+        sm2 = Average2()
+        inputs = [2,5,-9,100]
+        expected_outputs = [8.0, 15.5, 1.0, 148.5]
+
+        # preps the instance 
+        p = ParallelAdd(sm1, sm2)
+        # action 
+        outputs = p.transduce(inputs)
+
+        # assert
+        self.assertEqual(outputs, expected_outputs, "OUTPUT INCORRECT")
+
+    def proposed_test_invalid_inputs_returns_none_and_retain_state(self):
+        """  
+        test case when passing invalid inputs
+        """
+        self.fail("NO TEST")
