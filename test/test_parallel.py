@@ -201,13 +201,7 @@ class TestParallel2(unittest.TestCase):
         self.assertEqual(printed_out, expected_print, "print out is wrong")
         self.fail("NO TEST")
     
-    def test_tansduce_verbose_valid_inputs(self):
-        """  
-        Verbose transduce which will also test the states for each input
-        """
-        self.fail("NO TEST")
-    
-    def test_tansduce_verbose_invalid_inputs(self):
+    def transduce_verbose_invalid_inputs(self):
         """  
         test transduce with invalid inputs for each or both of the state machine
         """

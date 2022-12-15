@@ -54,3 +54,20 @@ class Parallel2(Parallel):
     I + {Anu}
     O = {Any}
     """
+
+    def splitValue(self, v: any)-> tuple:
+        """  
+        basically verify that the inputs are in pair and defined
+        """
+        if v == 'undefined' or len(v) < 2:
+            return ('undefined', 'undefined')
+        else:
+            return v
+
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (s1,s2) = state
+        (i1, i2) = self.splitValue(inp)
+        (next_s1, o1) = self.sm1.getNextValues(s1, i1)
+        (next_s2, o2) = self.sm2.getNextValues(s2, i2)
+        return ((next_s1, next_s2), (o1, o2))
