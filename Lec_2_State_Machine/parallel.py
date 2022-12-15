@@ -46,3 +46,53 @@ class Parallel(SM):
         (next_s1, o1) = self.sm1.getNextValues(s1, inp)
         (next_s2, o2) = self.sm2.getNextValues(s2, inp)
         return ((next_s1, next_s2), (o1, o2))
+
+class Parallel2(Parallel):
+    """  
+    Class Parallel with 2 inputs and 2 outputs
+    S = {Any}
+    I + {Anu}
+    O = {Any}
+    """
+
+    def splitValue(self, v: any)-> tuple:
+        """  
+        basically verify that the inputs are in pair and defined
+        """
+        if v == 'undefined' or type(v) != tuple:
+            return ('undefined', 'undefined')
+        elif len(v) != 2:
+            return ('undefined', 'undefined')
+        else:
+            return v
+
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        """  
+        Returns the output and next state for each SM
+        if the value is considered as undefined by the splitValue function then 
+        for both SM: output: undefined , next state = current valid state (retained)
+        """
+        (s1,s2) = state
+        (i1, i2) = self.splitValue(inp)
+        if i1 == 'undefined' or i2 == 'undefined':
+            res1 = (self.fnErr(s1, i1, RuntimeError('undefined')), self.foErr(s1, i1, RuntimeError('undefined')))
+            res2 = (self.fnErr(s2, i2, RuntimeError('undefined')), self.foErr(s2, i2, RuntimeError('undefined')))
+        else:
+            res1 = self.sm1.getNextValues(s1, i1)
+            res2 = self.sm2.getNextValues(s2, i2)
+        
+        (next_s1, o1) = res1
+        (next_s2, o2) = res2
+        return ((next_s1, next_s2), (o1, o2))
+
+class ParallelAdd(Parallel):
+    """  
+    Similar to the class Parallel but only have single outcomes which is the sum of each SM outputs
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        ((next_s1, next_s2), (o1, o2)) = super().getNextValues(state, inp, **kwargs)
+        try:
+            return ((next_s1, next_s2), o1 + o2)
+        except Exception as e:
+            return (self.fnErr(state, inp, e), self.foErr(state, inp, e))
