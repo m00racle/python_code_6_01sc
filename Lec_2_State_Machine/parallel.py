@@ -90,4 +90,9 @@ class ParallelAdd(Parallel):
     """  
     Similar to the class Parallel but only have single outcomes which is the sum of each SM outputs
     """
-    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        ((next_s1, next_s2), (o1, o2)) = super().getNextValues(state, inp, **kwargs)
+        try:
+            return ((next_s1, next_s2), o1 + o2)
+        except Exception as e:
+            return (self.fnErr(state, inp, e), self.foErr(state, inp, e))
