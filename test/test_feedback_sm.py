@@ -8,3 +8,11 @@ sys.path.append(code_dir)
 """  
 Test page for Feedback combinator
 """
+
+# import from file targeted for testing
+from feedback_sm import Feedback
+
+class TestFeedback(unittest.TestCase):
+    """  
+    test scenario for Feedback class
+    """
