@@ -16,3 +16,17 @@ class TestFeedback(unittest.TestCase):
     """  
     test scenario for Feedback class
     """
+
+    def proposed_test_increment_feedback_output(self):
+        """  
+        Test the output only for the incrementer state machine implementing feedback
+        NOTE: I need means to limit the run of the feedback to prevent infinite loop.
+        """
+        self.fail("NO TEST")
+
+    def proposed_test_increment_feedback_verbose(self):
+        """  
+        test the verbose printed output of the increment state machine
+
+        """
+        self.fail("NO TEST")
