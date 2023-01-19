@@ -345,3 +345,32 @@ class SumLast3(SM):
         """
         msg = e.args[0]
         return super().foErr(s, i, e, msg)
+
+class Increment(SM):
+    """  
+    Increment state machine:
+    fn (s, i) = ?
+    fo (s, i) = i + k (k is a constant)
+    """
+    def __init__(self, incr, initVal=0) -> None:
+        self.incr = incr
+        super().__init__(initVal)
+    
+    def safeAdd(self, a, b):
+        """  
+        a : number (int or float)
+        b : nubmer (int or float)
+        return a + b if a and b are int or float
+        """
+        
+        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
+            return a + b
+        else:
+            raise TypeError(None)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s, i : i + self.incr,
+            'fo' : lambda s, i : self.safeAdd(inp, self.incr)
+        }
+        return super().getNextValues(state, inp, **kwargs)

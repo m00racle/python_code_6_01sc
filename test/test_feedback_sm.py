@@ -11,7 +11,8 @@ Test page for Feedback combinator
 
 # import from file targeted for testing
 from feedback_sm import Feedback
-from cascade import Cascade, Increment, Delay
+from cascade import Cascade
+from state_machine import Increment, Delay
 
 class TestFeedback(unittest.TestCase):
     """  
