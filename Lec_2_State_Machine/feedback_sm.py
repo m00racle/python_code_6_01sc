@@ -1,4 +1,5 @@
-from state_machine import SM
+from state_machine import SM, Increment, Delay
+from cascade import Cascade
 
 """  
 Feedback Combinator
