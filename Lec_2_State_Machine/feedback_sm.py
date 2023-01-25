@@ -12,13 +12,9 @@ class Feedback(SM):
     """
     def __init__(self, sm : SM) -> None:
         self.sm = sm
-        # self.startState = 0
+        self.startState = None
 
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         (ignore, o) = self.sm.getNextValues(state, 'undefined')
         (newS, ignore) = self.sm.getNextValues(state, o)
         return (newS, o)
-
-    def transduce(self, inps, verbose=False):
-        return self.sm.transduce(inps, verbose)
-    
