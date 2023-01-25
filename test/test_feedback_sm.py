@@ -12,7 +12,7 @@ Test page for Feedback combinator
 # import from file targeted for testing
 from feedback_sm import Feedback
 from cascade import Cascade
-from state_machine import Increment, Delay
+from state_machine import Increment, Delay, Negation
 
 class TestFeedback(unittest.TestCase):
     """  
@@ -29,9 +29,7 @@ class TestFeedback(unittest.TestCase):
         # assert
         self.assertEqual(f.run(), [3,5,7,9,11,13,15,17,19,21])
 
-    def proposed_test_increment_feedback_verbose(self):
-        """  
-        test the verbose printed output of the increment state machine
-
-        """
-        self.fail("NO TEST")
+    def test_feedback_negation(self):
+        f = Feedback(Cascade(Negation(), Delay(False)))
+        # assert
+        self.assertEqual(f.run(5), [False, True, False, True, False])
