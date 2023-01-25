@@ -35,6 +35,9 @@ class SM:
 
     def getState(self):
         return self.state
+
+    def setState(self, state):
+        self.state = state
     
     def step(self, inp):
         """  
@@ -67,11 +70,11 @@ class SM:
         
         return result
 
-    def run(self, n = 10):
+    def run(self, n = 10, verbose = False):
         """  
         step but no input is given
         """
-        return self.transduce([None] * n)
+        return self.transduce([None] * n, verbose)
 
     def getNextValues(self, state, inp, **kwargs)->tuple:
         """  
@@ -345,3 +348,48 @@ class SumLast3(SM):
         """
         msg = e.args[0]
         return super().foErr(s, i, e, msg)
+
+class Increment(SM):
+    """  
+    Increment state machine:
+    fn (s, i) = ?
+    fo (s, i) = i + k (k is a constant)
+    """
+    def __init__(self, incr, initVal=0) -> None:
+        self.incr = incr
+        super().__init__(initVal)
+    
+    def safeAdd(self, a, b):
+        """  
+        a : number (int or float)
+        b : nubmer (int or float)
+        return a + b if a and b are int or float
+        """
+        
+        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
+            return a + b
+        else:
+            raise TypeError(None)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s, i : i + self.incr,
+            'fo' : lambda s, i : self.safeAdd(inp, self.incr)
+        }
+        return super().getNextValues(state, inp, **kwargs)
+
+class Negation(SM):
+    """  
+    Negation State Machine: 
+    Pure function given boolean returns negation of the argument
+    fn (s,i) = not(i)
+    fo (s,i) = not(i)
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        # check if inp is Boolean
+
+        kwargs = {
+            'fn' : lambda s, i : not i if isinstance(i, bool) else self.throw(TypeError(None)),
+            'fo' : lambda s, i : not i
+        }
+        return super().getNextValues(state, inp, **kwargs)

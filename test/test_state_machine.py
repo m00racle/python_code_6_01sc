@@ -360,3 +360,47 @@ class TestSumLast3(unittest.TestCase):
         self.assertEqual(result, goal_result, "LIST OUTPUT INCORRECT")
         self.assertEqual(capture.getvalue(), expected_print, "PRINT OUTPUT INCORRECT")
         self.assertEqual(l.getState(), (1,1), "FINAL STATE INCORRECT")
+
+class TestNegationSM(unittest.TestCase):
+    """  
+    Test the negation state machine
+    """
+
+    def setUp(self) -> None:
+        self.neg = sm.Negation()
+
+    def test_transduce_normal(self):
+        self.assertEqual(self.neg.transduce([True, True, True, False, False, False]), [False, False, False, True, True, True])
+
+    def test_transduce_invalid(self):
+        self.assertEqual(self.neg.run(5), [None, None, None, None, None])
+
+    def test_transduce_invalid_int(self):
+        self.assertEqual(self.neg.transduce([0,1,2,3,4]), [None, None, None, None, None])
+
+    def test_transduce_verbose_with_invalid_inputs(self):
+        """  
+        test how to handle invalid inputs
+        """
+        # arrange
+        capture = io.StringIO()
+        sys.stdout = capture
+        
+        expected_print = \
+            "Start state: 0\n" + \
+            "In: 2 Out: None Next State: 0\n"+\
+            "In: False Out: True Next State: True\n"+\
+            "In: a Out: None Next State: True\n"+\
+            "In: 4 Out: None Next State: True\n"+\
+            "In: 10 Out: None Next State: True\n"+\
+            "In: 1 Out: None Next State: True\n"+\
+            "In: None Out: None Next State: True\n"+\
+            "In: False Out: True Next State: True\n"+\
+            "In: True Out: False Next State: False\n"
+        
+        # action
+        result = self.neg.transduce([2, False, 'a', 4, 10, 1, None, False, True], verbose = True)
+        sys.stdout = sys.__stdout__
+
+        # assert:
+        self.assertEqual(capture.getvalue(), expected_print, "PRINT OUTPUT INCORRECT")

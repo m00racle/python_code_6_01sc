@@ -7,7 +7,7 @@ code_dir = os.path.normpath(test_dir + "/../Lec_2_State_Machine")
 sys.path.append(code_dir)
 
 import cascade as c
-from state_machine import Delay
+from state_machine import Delay, Increment
 
 class TestCascasdeClass(unittest.TestCase):
     """  
@@ -25,6 +25,18 @@ class TestCascasdeClass(unittest.TestCase):
         # self.fail('NO TEST')
         self.assertEqual(casc.transduce(inputs), expected_outputs)
 
+    def test_cascading_increment_delay_state_machines(self):
+        # arrange
+        # Increment state machine with increment 2 for each inputs
+        i = Increment(2)
+        # delay SM with init State 99
+        d = Delay(99)
+        # Cascade them all:
+        casc = c.Cascade(i, d)
+
+        # assert
+        self.assertEqual(casc.transduce([3.5, 8, 2.1, 4, 65]), [99, 5.5, 10, 4.1, 6])
+
 class TestIncrementClass(unittest.TestCase):
     """  
     testing Increment class
@@ -40,7 +52,7 @@ class TestIncrementClass(unittest.TestCase):
         expected_outputs = [5.5, 10, 4.1, 6, 67]
 
         # action
-        inc = c.Increment(incr)
+        inc = Increment(incr)
         self.assertEqual(inc.transduce(inputs), expected_outputs)
         
     def test_increment_non_numbers(self):
@@ -49,6 +61,6 @@ class TestIncrementClass(unittest.TestCase):
         expected_outputs = [4.7, None, None, None, 11.5]
 
         # action
-        inc = c.Increment(k)
+        inc = Increment(k)
         # assert
         self.assertEqual(inc.transduce(inputs), expected_outputs)
