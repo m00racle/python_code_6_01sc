@@ -25,6 +25,18 @@ class TestCascasdeClass(unittest.TestCase):
         # self.fail('NO TEST')
         self.assertEqual(casc.transduce(inputs), expected_outputs)
 
+    def test_cascading_increment_delay_state_machines(self):
+        # arrange
+        # Increment state machine with increment 2 for each inputs
+        i = Increment(2)
+        # delay SM with init State 99
+        d = Delay(99)
+        # Cascade them all:
+        casc = c.Cascade(i, d)
+
+        # assert
+        self.assertEqual(casc.transduce([3.5, 8, 2.1, 4, 65]), [99, 5.5, 10, 4.1, 6])
+
 class TestIncrementClass(unittest.TestCase):
     """  
     testing Increment class
