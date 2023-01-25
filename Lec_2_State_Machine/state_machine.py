@@ -374,3 +374,19 @@ class Increment(SM):
             'fo' : lambda s, i : self.safeAdd(inp, self.incr)
         }
         return super().getNextValues(state, inp, **kwargs)
+
+class Negation(SM):
+    """  
+    Negation State Machine: 
+    Pure function given boolean returns negation of the argument
+    fn (s,i) = not(i)
+    fo (s,i) = not(i)
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        # check if inp is Boolean
+
+        kwargs = {
+            'fn' : lambda s, i : not i if isinstance(i, bool) else self.throw(TypeError(None)),
+            'fo' : lambda s, i : not i
+        }
+        return super().getNextValues(state, inp, **kwargs)
