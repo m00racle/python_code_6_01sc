@@ -35,6 +35,9 @@ class SM:
 
     def getState(self):
         return self.state
+
+    def setState(self, state):
+        self.state = state
     
     def step(self, inp):
         """  
@@ -67,11 +70,11 @@ class SM:
         
         return result
 
-    def run(self, n = 10):
+    def run(self, n = 10, verbose = False):
         """  
         step but no input is given
         """
-        return self.transduce([None] * n)
+        return self.transduce([None] * n, verbose)
 
     def getNextValues(self, state, inp, **kwargs)->tuple:
         """  
