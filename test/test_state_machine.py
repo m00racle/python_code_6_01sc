@@ -404,3 +404,20 @@ class TestNegationSM(unittest.TestCase):
 
         # assert:
         self.assertEqual(capture.getvalue(), expected_print, "PRINT OUTPUT INCORRECT")
+
+class TestAdderSM(unittest.TestCase):
+    """  
+    Testing Adder State Machine
+    """
+
+    def setUp(self) -> None:
+        self.adder = sm.Adder()
+
+    def test_passing_non_tuple_argument_to_adder(self):
+        self.assertEqual(self.adder.transduce([1,2,3,4]), [None, None, None, None])
+
+    def test_passing_undefined_return_none(self):
+        self.assertEqual(self.adder.transduce(['undefined', ('undefined', 1), (2, 'undefined'), ('undefined', 'undefined')]), [None, None, None, None])
+
+    def test_passing_valid_tuple_argument_return_safe_add(self):
+        self.assertEqual(self.adder.transduce([(2,1), (45,55)]), [3, 100])

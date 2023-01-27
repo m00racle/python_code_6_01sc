@@ -393,3 +393,11 @@ class Negation(SM):
             'fo' : lambda s, i : not i
         }
         return super().getNextValues(state, inp, **kwargs)
+
+class Adder(SM):
+    """  
+    Adder input tuple elements together simultaneously
+    Pure function given a tuple safe add the elements
+    fn(s,i) = s
+    fo(s,i) = safeAdd(splitValue(i))
+    """
