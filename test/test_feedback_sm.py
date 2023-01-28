@@ -12,7 +12,8 @@ Test page for Feedback combinator
 # import from file targeted for testing
 from feedback_sm import Feedback
 from cascade import Cascade
-from state_machine import Increment, Delay, Negation
+from state_machine import Increment, Delay, Negation, Adder
+from parallel import Parallel
 
 class TestFeedback(unittest.TestCase):
     """  
@@ -33,3 +34,7 @@ class TestFeedback(unittest.TestCase):
         f = Feedback(Cascade(Negation(), Delay(False)))
         # assert
         self.assertEqual(f.run(5), [False, True, False, True, False])
+
+    def test_fibonacci_feedback(self):
+        fib = Feedback(Cascade(Parallel(Delay(1), Cascade(Delay(1), Delay(0))), Adder()))
+        self.assertEqual(fib.run(), [1, 2, 3, 5, 8, 13, 21, 34, 55, 89] )
