@@ -43,9 +43,11 @@ class Parallel(SM):
         Returns : tuple = ((sm1.nextState, sm2.nextState), (sm1.output, sm2.output))
         """
         (s1, s2) = state
-        (next_s1, o1) = self.sm1.getNextValues(s1, inp)
-        (next_s2, o2) = self.sm2.getNextValues(s2, inp)
-        return ((next_s1, next_s2), (o1, o2))
+        # (next_s1, o1) = self.sm1.getNextValues(s1, inp)
+        # (next_s2, o2) = self.sm2.getNextValues(s2, inp)
+        o1 = self.sm1.step(inp)
+        o2 = self.sm2.step(inp)
+        return ((self.sm1.getState(), self.sm2.getState()), (o1, o2))
 
 class Parallel2(Parallel):
     """  
