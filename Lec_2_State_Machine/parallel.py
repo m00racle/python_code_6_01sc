@@ -21,11 +21,11 @@ class Parallel(SM):
         initVal : tuple = (sm1.startState, sm2.startState)
         """
         self.sm1 = sm1
-        self.sm1.start()
+        # self.sm1.start()
         self.sm2 = sm2
-        self.sm2.start()
+        # self.sm2.start()
         # set the initVal and sent it to super to create startState and log dict
-        initVal = (sm1.getState(), sm2.getState())
+        initVal = (sm1.startState, sm2.startState)
         super().__init__(initVal)   
 
     def getNextValues(self, state, inp, **kwargs) -> tuple:

@@ -1,5 +1,4 @@
-from state_machine import SM, Increment, Delay
-from cascade import Cascade
+from state_machine import SM
 
 """  
 Feedback Combinator
@@ -12,7 +11,7 @@ class Feedback(SM):
     """
     def __init__(self, sm : SM) -> None:
         self.sm = sm
-        self.startState = self.sm.startState
+        self.startState = sm.startState
 
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         (ignore, o) = self.sm.getNextValues(state, 'undefined')

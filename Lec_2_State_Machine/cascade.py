@@ -12,11 +12,10 @@ class Cascade(SM):
         self.m1 = m1
         self.m2 = m2
         self.log = {}
-        self.startState = self.m1.startState
-        self.m1.start()
-        self.m2.start()
+        self.startState = (m1.startState, m2.startState)
 
     def getNextValues(self, state, inp, **kwargs) -> tuple:
-        currentState = state
-        o = self.m2.step(self.m1.step(inp))
-        return (o, o)
+        (s1, s2) = state
+        (next_s1, o1) = self.m1.getNextValues(s1, inp)
+        (next_s2, o2) = self.m2.getNextValues(s2, o1)
+        return ((next_s1, next_s2), o2)

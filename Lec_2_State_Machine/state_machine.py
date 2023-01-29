@@ -393,3 +393,44 @@ class Negation(SM):
             'fo' : lambda s, i : not i
         }
         return super().getNextValues(state, inp, **kwargs)
+
+class Adder(SM):
+    """  
+    Adder input tuple elements together simultaneously
+    Pure function given a tuple safe add the elements
+    fn(s,i) = s
+    fo(s,i) = safeAdd(splitValue(i))
+    """
+
+    def splitValue(self, v: any)-> tuple:
+        """  
+        basically verify that the inputs are in pair and defined
+        """
+        if v == 'undefined' or type(v) != tuple:
+            return ('undefined', 'undefined')
+        elif len(v) != 2:
+            return ('undefined', 'undefined')
+        else:
+            return v
+
+    def safeAdd(self, a, b):
+        """  
+        a : number (int or float)
+        b : nubmer (int or float)
+        return a + b if a and b are int or float
+        """
+        
+        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
+            return a + b
+        else:
+            raise TypeError(None)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (i1, i2) = self.splitValue(inp)
+        try:
+            o = self.safeAdd(i1, i2)
+        except TypeError as e:
+            return (state, e.args[0])
+        except:
+            "other error raised"
+        return (state, o)
