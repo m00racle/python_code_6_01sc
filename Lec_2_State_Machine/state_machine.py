@@ -448,3 +448,21 @@ class Wire(SM):
             'fo' : lambda s, i : i
         }
         return super().getNextValues(state, inp, **kwargs)
+
+class Fixed(SM):
+    """  
+    Fixed class always output constant number output
+    given k at init as constant
+    fn(s,i) = s
+    fo(s,i) = k
+    """
+    def __init__(self, k, initVal=0) -> None:
+        super().__init__(initVal)
+        self.k = k
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s, i : s,
+            'fo' : lambda s, i : self.k
+        }
+        return super().getNextValues(state, inp, **kwargs)

@@ -447,3 +447,11 @@ class TestWireSM(unittest.TestCase):
         # Assert
         self.assertEqual(out, fed, "pass through FAILED")
         self.assertEqual(capOut.getvalue(), printed)
+
+class TestFixedClass(unittest.TestCase):
+    """  
+    testing the fixed class
+    """
+    def test_all_outputs_are_fixed(self):
+        f = sm.Fixed(2)
+        self.assertEqual(f.run(5), [2,2,2,2,2])
