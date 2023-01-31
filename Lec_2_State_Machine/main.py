@@ -1,4 +1,4 @@
-from state_machine import Delay, Increment, Adder
+from state_machine import Delay, Increment, Adder, Wire
 from cascade import Cascade
 from feedback_sm import Feedback
 from parallel import Parallel
@@ -33,8 +33,10 @@ def main()->None:
     """  
     What would we have to do to this machine to get the sequence [1, 1, 2, 3, 5, ...]?
     """
+    fib = Feedback(Cascade(Parallel(Delay(1), Cascade(Delay(1), Delay(0))), Adder()))
     fib1 = Feedback(Cascade(Parallel(Delay(0), Cascade(Delay(0), Delay(1))), Adder()))
     print(f'\nExercise 4.6:')
+    print(f'fib results: {fib.run(verbose=True)}\n')
     print(f'fib1 results: {fib1.run(verbose=True)}\n')
 
     # Exercise 4.7: 
@@ -43,6 +45,11 @@ def main()->None:
 
     You might want to use an instance of the Wire class. A Wire is the completely passive machine, whose output is always instantaneously equal to its input. It is not very interesting by itself, but sometimes handy when building things.
     """
+    fed2 = Feedback(Cascade(Parallel(Wire(), Cascade(Delay(1), Delay(0))), Adder()))
+    fed3 = Feedback(Cascade(Parallel(Delay(0), Delay(1)), Adder()))
+    print(f'\nExercise 4.7: ')
+    print(f'fib2 results: {fed2.run(verbose=True)}\n')
+    print(f'fib2 results: {fed3.run(verbose=True)}\n')
 
 if __name__ == '__main__':
     main()
