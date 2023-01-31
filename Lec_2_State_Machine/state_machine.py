@@ -466,3 +466,20 @@ class Fixed(SM):
             'fo' : lambda s, i : self.k
         }
         return super().getNextValues(state, inp, **kwargs)
+
+class Multiplier(SM):
+    """  
+    Given tuple of inputs
+    Returns safe mul of the inputs
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (i1, i2) = self.splitValue(inp)
+
+        try:
+            o = self.safeMul(i1, i2)
+        except TypeError as e:
+            return (state, e.args[0])
+        except:
+            "other error raised"
+        
+        return (state, o)

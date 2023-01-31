@@ -464,8 +464,8 @@ class TestMultiplierClass(unittest.TestCase):
         self.m = sm.Multiplier()
 
     def test_valid_inputs_tuple(self):
-        input = [(1,1.5), (2.3, 3), (0, 200), (-3, -3), (4, -3)]
-        output = [1.5, 6.9, 0, 9, -12]
+        input = [(1,1.5), (-2.3, 4), (0, 200), (-3, -3), (4, -3)]
+        output = [1.5, -9.2, 0, 9, -12]
         # assert
         self.assertEqual(self.m.transduce(input), output)
     
