@@ -178,6 +178,16 @@ class SM:
             return a + b
         else:
             raise TypeError(None)
+
+    def safeMul(self, a, b):
+        """  
+        Helper function to safely multiply inputs
+        """
+
+        if isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool) and not isinstance(b,bool):
+            return a * b
+        else:
+            raise TypeError(None)
     
 
 """  *************************
