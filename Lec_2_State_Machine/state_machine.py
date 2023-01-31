@@ -424,3 +424,17 @@ class Adder(SM):
         except:
             "other error raised"
         return (state, o)
+
+class Wire(SM):
+    """  
+    Wire just pass trhought he input
+    given state and input
+    fn(s,i) = s
+    fo(s,i) = i
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        kwargs = {
+            'fn' : lambda s, i : s,
+            'fo' : lambda s, i : i
+        }
+        return super().getNextValues(state, inp, **kwargs)

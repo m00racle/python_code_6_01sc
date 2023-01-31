@@ -421,3 +421,29 @@ class TestAdderSM(unittest.TestCase):
 
     def test_passing_valid_tuple_argument_return_safe_add(self):
         self.assertEqual(self.adder.transduce([(2,1), (45,55)]), [3, 100])
+
+class TestWireSM(unittest.TestCase):
+    """  
+    testing the Wire class
+    """
+    def test_wire_pass_trhough_inp_and_state(self):
+        # settings
+        fed = [2.2, 'a', 0, True, None]
+        wire = sm.Wire()
+        # this is to capture printed message
+        capOut = io.StringIO() 
+        sys.stdout = capOut
+        printed = \
+                "Start state: 0\n" + \
+                "In: 2.2 Out: 2.2 Next State: 0\n" + \
+                "In: a Out: a Next State: 0\n" + \
+                "In: 0 Out: 0 Next State: 0\n" + \
+                "In: True Out: True Next State: 0\n" + \
+                "In: None Out: None Next State: 0\n"
+        
+        # action
+        out = wire.transduce(fed, verbose=True)
+        sys.stdout = sys.__stdout__
+        # Assert
+        self.assertEqual(out, fed, "pass through FAILED")
+        self.assertEqual(capOut.getvalue(), printed)
