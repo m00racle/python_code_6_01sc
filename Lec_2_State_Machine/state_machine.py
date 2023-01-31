@@ -153,6 +153,31 @@ class SM:
         This is because lambda function in Python can't directly raise any exception.
         """
         raise excep
+
+    def splitValue(self, v: any)-> tuple:
+        """  
+        helper function:
+        basically verify that the inputs are in pair and defined
+        """
+        if v == 'undefined' or type(v) != tuple:
+            return ('undefined', 'undefined')
+        elif len(v) != 2:
+            return ('undefined', 'undefined')
+        else:
+            return v
+
+    def safeAdd(self, a, b):
+        """  
+        helper function to safely add inputs
+        a : number (int or float)
+        b : nubmer (int or float)
+        return a + b if a and b are int or float
+        """
+        
+        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
+            return a + b
+        else:
+            raise TypeError(None)
     
 
 """  *************************
@@ -359,18 +384,6 @@ class Increment(SM):
         self.incr = incr
         super().__init__(initVal)
     
-    def safeAdd(self, a, b):
-        """  
-        a : number (int or float)
-        b : nubmer (int or float)
-        return a + b if a and b are int or float
-        """
-        
-        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
-            return a + b
-        else:
-            raise TypeError(None)
-    
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         kwargs = {
             'fn' : lambda s, i : i + self.incr,
@@ -401,29 +414,6 @@ class Adder(SM):
     fn(s,i) = s
     fo(s,i) = safeAdd(splitValue(i))
     """
-
-    def splitValue(self, v: any)-> tuple:
-        """  
-        basically verify that the inputs are in pair and defined
-        """
-        if v == 'undefined' or type(v) != tuple:
-            return ('undefined', 'undefined')
-        elif len(v) != 2:
-            return ('undefined', 'undefined')
-        else:
-            return v
-
-    def safeAdd(self, a, b):
-        """  
-        a : number (int or float)
-        b : nubmer (int or float)
-        return a + b if a and b are int or float
-        """
-        
-        if isinstance(a,(int, float)) and isinstance(b, (int, float)) and not isinstance(a,bool) and not isinstance(b,bool):
-            return a + b
-        else:
-            raise TypeError(None)
 
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         (i1, i2) = self.splitValue(inp)
