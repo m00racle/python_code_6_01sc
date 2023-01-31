@@ -455,3 +455,21 @@ class TestFixedClass(unittest.TestCase):
     def test_all_outputs_are_fixed(self):
         f = sm.Fixed(2)
         self.assertEqual(f.run(5), [2,2,2,2,2])
+
+class TestMultiplierClass(unittest.TestCase):
+    """  
+    Testing Multiplier class
+    """
+    def setUp(self) -> None:
+        self.m = sm.Multiplier()
+
+    def test_valid_inputs_tuple(self):
+        input = [(1,1.5), (2.3, 3), (0, 200), (-3, -3), (4, -3)]
+        output = [1.5, 6.9, 0, 9, -12]
+        # assert
+        self.assertEqual(self.m.transduce(input), output)
+    
+    def test_invalid_inputs_returns_None(self):
+        input = [2, (None, 'a'), (2, 'undefined'), 'undefined']
+        # assert
+        self.assertEqual(self.m.transduce(input), [None, None, None, None])
