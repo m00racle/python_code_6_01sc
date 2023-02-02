@@ -52,3 +52,8 @@ class TestFeedbackAdd(unittest.TestCase):
         fa = FeedbackAdd(Delay(0), Wire())
         # assert
         self.assertEqual(fa.transduce(range(10)), [0,0,1,3,6,10,15,21,28,36])
+
+    def test_non_delay_return_raise_type_error_none(self):
+        fb = FeedbackAdd(Wire(), Wire())
+        # assert
+        self.assertEqual(fb.transduce(range(10)), [None] * 10)
