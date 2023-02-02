@@ -43,3 +43,16 @@ class FeedbackAdd(Feedback):
         except TypeError as e:
             return (state, e.args[0])
         return (newS, o)
+
+class FeedbackSub(FeedbackAdd):
+    """  
+    class Feedback which the feedback subtract the new input
+    """
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        try:
+            (s1, o) = self.sm1.getNextValues(state, 'undefined')
+            (s2, o2) = self.sm2.getNextValues(s1, o)
+            (newS, ignore) = self.sm1.getNextValues(s2, self.safeAdd(inp, self.safeMul(-1, o2)))
+        except TypeError as e:
+            return (state, e.args[0])
+        return (newS, o)

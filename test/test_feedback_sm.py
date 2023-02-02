@@ -10,7 +10,7 @@ Test page for Feedback combinator
 """
 
 # import from file targeted for testing
-from feedback_sm import Feedback, FeedbackAdd
+from feedback_sm import Feedback, FeedbackAdd, FeedbackSub
 from cascade import Cascade
 from state_machine import Increment, Delay, Negation, Adder, Wire
 from parallel import Parallel
@@ -55,5 +55,24 @@ class TestFeedbackAdd(unittest.TestCase):
 
     def test_non_delay_return_raise_type_error_none(self):
         fb = FeedbackAdd(Wire(), Wire())
+        # assert
+        self.assertEqual(fb.transduce(range(10)), [None] * 10)
+
+class TestFeedbackSub(unittest.TestCase):
+    """  
+    Test scenario for FeedbackSub class
+    """
+    def test_transduce_sequence_output_sum_all_inputs(self):
+        """  
+        transduce [0,1,2,3,4,5,6,7,8,9]
+        return [0,0,1,3,6,10,15,21,28,36]
+        """
+        # arrange
+        fs = FeedbackSub(Delay(0), Wire())
+        # assert
+        self.assertEqual(fs.transduce(range(10)), [0,0,1,1,2,2,3,3,4,4])
+
+    def test_non_delay_return_raise_type_error_none(self):
+        fb = FeedbackSub(Wire(), Wire())
         # assert
         self.assertEqual(fb.transduce(range(10)), [None] * 10)

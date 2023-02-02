@@ -4,7 +4,7 @@ import cascade as cd
 
 def main():
     # fadd = fb.FeedbackAdd(cd.Cascade(sm.Wire(), sm.Delay(0)), sm.Delay(0))
-    fadd = fb.FeedbackAdd(sm.Wire(), sm.Wire())
+    fadd = fb.FeedbackAdd(cd.Cascade(sm.Increment(2), sm.Delay(0)), sm.Wire())
     print(fadd.transduce(range(10)))
 
 if __name__ == "__main__":
