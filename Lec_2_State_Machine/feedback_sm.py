@@ -25,6 +25,7 @@ class Feedback2(Feedback):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         (ignore, o) = self.sm.getNextValues(state, (inp, 'undefined'))
         (newS, ignore) = self.sm.getNextValues(state, (inp, o))
+        return (newS, o)
 
 class FeedbackAdd(Feedback):
     """  
