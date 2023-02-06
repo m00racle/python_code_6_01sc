@@ -10,9 +10,9 @@ Test page for Feedback combinator
 """
 
 # import from file targeted for testing
-from feedback_sm import Feedback, FeedbackAdd, FeedbackSub
+from feedback_sm import Feedback, FeedbackAdd, FeedbackSub, Feedback2
 from cascade import Cascade
-from state_machine import Increment, Delay, Negation, Adder, Wire, Gain
+from state_machine import Increment, Delay, Negation, Adder, Wire, Gain, Multiplier
 from parallel import Parallel
 
 class TestFeedback(unittest.TestCase):
@@ -38,6 +38,17 @@ class TestFeedback(unittest.TestCase):
     def test_fibonacci_feedback(self):
         fib = Feedback(Cascade(Parallel(Delay(1), Cascade(Delay(1), Delay(0))), Adder()))
         self.assertEqual(fib.run(), [1, 2, 3, 5, 8, 13, 21, 34, 55, 89] )
+
+    def test_factorial_using_Feedback2(self):
+        """  
+        build factorial state machine using combination of: Feedback, 
+        """
+        # arrange
+        counter = Feedback(Cascade(Increment(1), Delay(1)))
+        fact = Cascade(counter, Feedback2(Cascade(Multiplier(), Delay(1))))
+
+        # assert
+        self.assertEqual(fact.run(), [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880])
 
 class TestFeedbackAdd(unittest.TestCase):
     """  
