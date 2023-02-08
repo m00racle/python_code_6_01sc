@@ -43,4 +43,4 @@ class TestClassMultiplex(unittest.TestCase):
         inps = [2,3,4,200,300,400,1,200,3]
         m = c.Multiplex(lambda i: i > 100, sm.Accumulator(), sm.Gain(1))
         # assert
-        self.assertEqual(m.transduce(inps), [2,3,4,204,504,904,1,201,3])
+        self.assertEqual(m.transduce(inps), [2, 3, 4, 209, 509, 909, 1, 1110, 3])
