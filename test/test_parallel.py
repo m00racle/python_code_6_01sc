@@ -13,7 +13,7 @@ class TestParallel(unittest.TestCase):
     """  
     unit test for Parallel class implementations
     """
-    # TODO: develop scenario for testing purposes
+    # : develop scenario for testing purposes
     def test_parallel_all_valid_data(self):
         """  
         Pretty simple test:
@@ -106,10 +106,10 @@ class TestParallel2(unittest.TestCase):
     def proposed_test_combining_two_inputs(self):
         """  
         PROPOSED (PENDING DESIGN FOR FUTURE DEVS)
-        TODO: find a scenario that can be test the inputs when passed as __init__
+        : find a scenario that can be test the inputs when passed as __init__
         the inputs passed for arguments will be two separate list
         Then in the init it should be combined to form valid inputs for the SM.
-        TODO: find a way to know the input?? Maybe using transduce verbose?? IT IS ALWAYS GOOD FOR TEST
+        : find a way to know the input?? Maybe using transduce verbose?? IT IS ALWAYS GOOD FOR TEST
         """
         sm1 = Accumulator()
         inp_1 = [1,5,7,13,15]
