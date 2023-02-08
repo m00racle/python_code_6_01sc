@@ -38,3 +38,9 @@ class TestClassMultiplex(unittest.TestCase):
 
         # assert
         self.assertEqual(m.transduce(inps), [2,5,9,209,509,909,910,912, 915])
+
+    def test_accumulator_gain_constituent_scenario(self):
+        inps = [2,3,4,200,300,400,1,200,3]
+        m = c.Multiplex(lambda i: i > 100, sm.Accumulator(), sm.Gain(1))
+        # assert
+        self.assertEqual(m.transduce(inps), [2,3,4,204,504,904,1,201,3])
