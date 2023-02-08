@@ -22,7 +22,7 @@ class TestRobotPlantController(unittest.TestCase):
         given combined plant and contoller
         test the robot movement towards wall limit
         """
-        robot = Feedback(Cascade(pc.WallController(-1.5, 1.0), pc.WallWorld(5)))
+        robot = Feedback(Cascade(pc.WallController(-1.5, 1.0), pc.WallWorld(0.1, 5)))
 
         # assert 
         self.assertEqual(robot.run(30), \
