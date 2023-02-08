@@ -47,7 +47,7 @@ class Multiplex(Switch):
             (ns2, o2) = self.sm2.getNextValues(s2, inp)
 
             # decide which output:
-            output = o1 if self.condition else o2
+            output = o1 if self.condition(inp) else o2
             return ((ns1, ns2), output)
         except Exception as e:
             return ((s1, s2), None)
