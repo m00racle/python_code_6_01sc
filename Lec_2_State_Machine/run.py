@@ -22,8 +22,10 @@ def conditional_run():
     feed2 = [2,3,4,200,300,400,1,200,3]
     s = cond.Switch(lambda i: i > 100, sm.Accumulator(), sm.Accumulator())
     m = cond.Multiplex(lambda i: i > 100, sm.Accumulator(), sm.Gain(1))
+    i = cond.If(lambda i : i > 100, sm.Gain(1), sm.Accumulator())
     print(f'switch result: {s.transduce(feeds, verbose=True)}\n')
     print(f'Multiplex result: {m.transduce(feed2, verbose=True)}\n')
+    print(f'if result: {i.transduce(feed2, verbose=True)}')
 
 def main():
     # fadd = fb.FeedbackAdd(cd.Cascade(sm.Wire(), sm.Delay(0)), sm.Delay(0))
