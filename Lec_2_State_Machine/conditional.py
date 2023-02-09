@@ -51,3 +51,36 @@ class Multiplex(Switch):
             return ((ns1, ns2), output)
         except Exception as e:
             return ((s1, s2), None)
+
+class If(SM):
+    """  
+    Given:
+    condition : function = lambda function returns bool
+    sm1 : SM
+    sm2 : SM
+    """
+    def __init__(self, condition, sm1: SM, sm2: SM, initVal=0) -> None:
+        self.startState = ('start', None)
+        self.condition = condition
+        self.sm1 = sm1
+        self.sm2 = sm2
+
+    def getFirstRealState(self, inp):
+        if self.condition(inp):
+            return ('runningSM1', self.sm1.startState)
+        else:
+            return ('runningSM2', self.sm2.startState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        # dissect the state
+        (ifState, smState) = state
+        # check what mode if state is 
+        if ifState == 'start':
+            (ifState, smState) = self.getFirstRealState(inp)
+        # Then continue using the real smState but only their owns state machine
+        if ifState == 'runningSM1':
+            (newS, o) = self.sm1.getNextValues(smState, inp)
+            return (('runningSM1',newS), o)
+        else:
+            (newS, o) = self.sm2.getNextValues(smState, inp)
+            return (('runningSM2',newS), o)
