@@ -56,15 +56,16 @@ class SM:
         # prepare the state to be startState:
         result = []
         self.start()
-
-        if not verbose : return [self.step(inp) for inp in inps]
-
-        print(f"Start state: {self.state}")
+        
+        if verbose : print(f"Start state: {self.state}")
 
         for inp in inps:
+            if self.done(self.state) : break
+
             (s, o) = self.getNextValues(self.state, inp)
             
-            print(f"In: {inp} Out: {o} Next State: {s}")
+            if verbose : print(f"In: {inp} Out: {o} Next State: {s}")
+            
             result.append(o)
             self.state = s
         
@@ -500,3 +501,16 @@ class ConsumeFiveValues(SM):
     """
     def __init__(self, initVal=(0, 0)) -> None:
         super().__init__(initVal)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (count, total) = state
+        if count == 4:
+            return ((count + 1, total + inp), total + inp)
+        else:
+            return ((count + 1, total + inp), None)
+    
+    def done(self, state) -> bool:
+        # check if the count (part of state) is 5,
+        # if yes the transduce is done
+        (count, total) = state
+        return count == 5
