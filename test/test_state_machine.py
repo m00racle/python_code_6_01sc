@@ -473,3 +473,31 @@ class TestMultiplierClass(unittest.TestCase):
         input = [2, (None, 'a'), (2, 'undefined'), 'undefined']
         # assert
         self.assertEqual(self.m.transduce(input), [None, None, None, None])
+
+class TestConsumeFiveValuesClass(unittest.TestCase):
+    """  
+    test ConcumeFiveValues class 
+    but the main focus is to test the def done function
+    """
+    def setUp(self) -> None:
+        self.smf = sm.ConsumeFiveValues()
+        self.inputs = [i for i in range(1,11)]
+    
+    def test_transduce_non_verbose_scenario(self):
+        self.assertEqual(self.smf.transduce(self.inputs), [None]*4 + [15])
+
+    def test_transduce_verbose_mode_scenario(self):
+        capture = io.StringIO()
+        sys.stdout = capture
+        expected_printout = \
+            "Start state: (0, 0)\n"+\
+            "In: 1 Out: None Next State: (1, 1)\n"+\
+            "In: 2 Out: None Next State: (2, 3)\n"+\
+            "In: 3 Out: None Next State: (3, 6)\n"+\
+            "In: 4 Out: None Next State: (4, 10)\n"+\
+            "In: 5 Out: 15 Next State: (5, 15)\n"
+        # action
+        self.smf.transduce(self.inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        # assert
+        self.assertEqual(capture.getvalue(), expected_printout)
