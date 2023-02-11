@@ -189,6 +189,12 @@ class SM:
         else:
             raise TypeError(None)
     
+    def done(self, state) -> bool:
+        """  
+        Default function to terminante the sequence of SM process
+        """
+        return False
+    
 
 """  *************************
 Sub classes implementing SM: *
@@ -483,3 +489,14 @@ class Multiplier(SM):
             "other error raised"
         
         return (state, o)
+
+class ConsumeFiveValues(SM):
+    """  
+    iniVal = (count = 0, total = 0)
+    fn : s, i = (count + 1, total + inp)
+    fo : s, i = total + inp if count == 4 else None
+
+    -- if count is already 5 then break
+    """
+    def __init__(self, initVal=(0, 0)) -> None:
+        super().__init__(initVal)
