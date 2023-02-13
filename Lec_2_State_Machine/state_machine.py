@@ -529,7 +529,31 @@ class Repeat(SM):
         """
         self.sm = sm
         self.n = n
-        self.startState(0, self.sm.startState)
+        self.startState = (0, self.sm.startState)
+    
+    def advanceIfDone(self, counter, smState)->tuple:
+        """  
+        add counter when sm is done
+        reset the sm state to sm.startState
+        return (counter, state)
+        """
+        while self.sm.done(smState) and not self.done((counter, smState)):
+            # while repeat is not done even as the constituen sm is done:
+            counter += 1
+            # reset the constituent sm back to its startState
+            smState = self.sm.startState
+        return (counter, smState)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (counter, smState) = state
+        (smState, o) = self.sm.getNextValues(smState, inp)
+        (counter, smState) = self.advanceIfDone(counter, smState)
+        return ((counter, smState), o)
+
+    def done(self, state) -> bool:
+        (counter, smState) = state
+        return counter == self.n
+
 
 class CharTSM(SM):
     """  
