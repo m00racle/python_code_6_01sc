@@ -514,3 +514,36 @@ class ConsumeFiveValues(SM):
         # if yes the transduce is done
         (count, total) = state
         return count == 5
+
+class Repeat(SM):
+    """  
+    Given:
+    sm : SM = constituent state machine
+    n : int = how many times it should repeat (DEFAULT = None)
+    WARNING: left the n in Default value (None) can result infinite loop
+    state type = (count, sm state)
+    """
+    def __init__(self, sm: SM, n: int = None) -> None:
+        """  
+        full override of the init
+        """
+        self.sm = sm
+        self.n = n
+        self.startState(0, self.sm.startState)
+
+class CharTSM(SM):
+    """  
+    Simple subclass of SM used to test Repeat class
+    Given:
+    c: str = character 
+    state = boolean
+    """
+    def __init__(self, c:str, initVal=False) -> None:
+        super().__init__(initVal)
+        self.c = c
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        return (True, self.c)
+    
+    def done(self, state) -> bool:
+        return state
