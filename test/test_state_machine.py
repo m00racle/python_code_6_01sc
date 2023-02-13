@@ -541,3 +541,34 @@ class TestRepeatClass(unittest.TestCase):
         sm.Repeat(sm.CharTSM('a'), 4).run(verbose=True)
         sys.stdout = sys.__stdout__
         self.assertEqual(scanout.getvalue(), expected_out)
+
+    def test_counter_only_incremented_when_constituent_is_done(self):
+        cap = io.StringIO()
+        # handouver stdout to cap
+        sys.stdout = cap
+        expected_out = \
+            "Start state: (0, (0, 0))\n"+\
+            "In: 0 Out: None Next State: (0, (1, 0))\n"+\
+            "In: 1 Out: None Next State: (0, (2, 1))\n"+\
+            "In: 2 Out: None Next State: (0, (3, 3))\n"+\
+            "In: 3 Out: None Next State: (0, (4, 6))\n"+\
+            "In: 4 Out: 10 Next State: (1, (0, 0))\n"+\
+            "In: 5 Out: None Next State: (1, (1, 5))\n"+\
+            "In: 6 Out: None Next State: (1, (2, 11))\n"+\
+            "In: 7 Out: None Next State: (1, (3, 18))\n"+\
+            "In: 8 Out: None Next State: (1, (4, 26))\n"+\
+            "In: 9 Out: 35 Next State: (2, (0, 0))\n"+\
+            "In: 10 Out: None Next State: (2, (1, 10))\n"+\
+            "In: 11 Out: None Next State: (2, (2, 21))\n"+\
+            "In: 12 Out: None Next State: (2, (3, 33))\n"+\
+            "In: 13 Out: None Next State: (2, (4, 46))\n"+\
+            "In: 14 Out: 60 Next State: (3, (0, 0))\n"
+        # action
+        result = sm.Repeat(sm.ConsumeFiveValues(), 3).transduce(range(100), verbose=True)
+        # handover back the sys stdout to default __stdout__
+        sys.stdout = sys.__stdout__
+        # assert
+        self.assertEqual(result,\
+             [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60],\
+                "Result is wrong")
+        self.assertEqual(cap.getvalue(), expected_out, "PRINT OUT is wrong")
