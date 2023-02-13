@@ -517,10 +517,27 @@ class TestRepeatClass(unittest.TestCase):
             "In: None Out: a Next State: True\n"
         # action
         result = self.ch.run(verbose=True)
+        # give back the stdout to the default
+        sys.stdout = sys.__stdout__
         # assert
         self.assertEqual(result, ['a'], "result is WORNG")
         self.assertEqual(capout.getvalue(), expected_out, "Print out is WRONG")
 
-    def test_repeat_class_non_verbose(self):
+    def test_repeat_class_to_charTSM_non_verbose(self):
         rep = sm.Repeat(self.ch, 4)
         self.assertEqual(rep.run(), ['a', 'a', 'a', 'a'])
+
+    def test_repeat_class_to_charTSM_verbose_scenario(self):
+        scanout = io.StringIO()
+        sys.stdout = scanout
+        expected_out = \
+            "Start state: (0, False)\n"+\
+            "In: None Out: a Next State: (1, False)\n"+\
+            "In: None Out: a Next State: (2, False)\n"+\
+            "In: None Out: a Next State: (3, False)\n"+\
+            "In: None Out: a Next State: (4, False)\n"
+        
+        # action
+        sm.Repeat(sm.CharTSM('a'), 4).run(verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(scanout.getvalue(), expected_out)
