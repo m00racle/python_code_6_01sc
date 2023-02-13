@@ -501,3 +501,26 @@ class TestConsumeFiveValuesClass(unittest.TestCase):
         sys.stdout = sys.__stdout__
         # assert
         self.assertEqual(capture.getvalue(), expected_printout)
+
+class TestRepeatClass(unittest.TestCase):
+    """  
+    Test case scenarion for Repeat SM
+    """
+    def setUp(self) -> None:
+        self.ch = sm.CharTSM('a')
+    
+    def test_charTSM_class_verbose(self):
+        capout = io.StringIO()
+        sys.stdout = capout
+        expected_out = \
+            "Start state: False\n"+\
+            "In: None Out: a Next State: True\n"
+        # action
+        result = self.ch.run(verbose=True)
+        # assert
+        self.assertEqual(result, ['a'], "result is WORNG")
+        self.assertEqual(capout.getvalue(), expected_out, "Print out is WRONG")
+
+    def test_repeat_class_non_verbose(self):
+        rep = sm.Repeat(self.ch, 4)
+        self.assertEqual(rep.run(), ['a', 'a', 'a', 'a'])
