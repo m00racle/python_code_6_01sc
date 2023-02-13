@@ -1,0 +1,13 @@
+Exercise 4.13. 
+Monty P. thinks that the following call >>> sm.Repeat(ConsumeFiveValues(), 3).transduce(range(100)) will generate a sequence of 14 Nones followed by the sum of the first 15 integers (starting at 0). R. Reticulatis disagrees. Who is right and why?
+
+Answer:
+def repeat_consume_five_values():
+    """  
+    run test repeat on consume five values 3 times
+    """
+    print(f'repeat consume five values 3 times= {sm.Repeat(sm.ConsumeFiveValues(),3).transduce(range(100))}')
+
+Result:
+repeat consume five values 3 times= [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60]
+But this is still a good case to analyze further step by step.
