@@ -27,11 +27,11 @@ def conditional_run():
     print(f'Multiplex result: {m.transduce(feed2, verbose=True)}\n')
     print(f'if result: {i.transduce(feed2, verbose=True)}')
 
-def repeat_consume_five_values():
+def repeat_consume_five_values(verbose=False):
     """  
     run test repeat on consume five values 3 times
     """
-    print(f'repeat consume five values 3 times= {sm.Repeat(sm.ConsumeFiveValues(),3).transduce(range(100))}')
+    print(f'repeat consume five values 3 times= {sm.Repeat(sm.ConsumeFiveValues(),3).transduce(range(100), verbose)}')
 
 def main():
     # fadd = fb.FeedbackAdd(cd.Cascade(sm.Wire(), sm.Delay(0)), sm.Delay(0))
@@ -41,7 +41,8 @@ def main():
     print(f'run on: {now}\n')
     # pc_run() # plant and controller SM run
     # conditional_run() #switch, mux run
-    repeat_consume_five_values() # test repeat for complex system
+    # repeat_consume_five_values() # test repeat for complex system
+    repeat_consume_five_values(verbose=True) # test repeat complex system in verbose
 
     
 
