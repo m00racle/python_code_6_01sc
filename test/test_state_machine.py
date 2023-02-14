@@ -572,3 +572,34 @@ class TestRepeatClass(unittest.TestCase):
              [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60],\
                 "Result is wrong")
         self.assertEqual(cap.getvalue(), expected_out, "PRINT OUT is wrong")
+
+class TestSequenceClass(unittest.TestCase):
+    """  
+    test for the sequence class
+    """
+    def test_basic_sequence_3_charTSM_verbose(self):
+        # preps
+        m = sm.Sequence([sm.CharTSM('a'), sm.CharTSM('b'), sm.CharTSM('c')])
+        scanner = io.StringIO()
+        sys.stdout = scanner
+        expected_output = \
+            "Start state: (0, False)\n"+\
+            "In: None Out: a Next State: (1, False)\n"+\
+            "In: None Out: b Next State: (2, False)\n"+\
+            "In: None Out: c Next State: (2, True)\n"
+        action = m.run()
+        # return the stdout to its default methods
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, ['a', 'b', 'c'], 'ACTION result is wrong')
+        self.assertEqual(scanner.getvalue(), expected_output, "verbose scanner is wrong")
+
+    def test_hello_word_string_to_list_of_chars(self):
+        hello = 'Hello World'
+        m = sm.Sequence([sm.CharTSM(c) for c in hello])
+        action = m.run()
+        self.assertEqual(action, ['H','e','l','l','o',' ','W','o','r','l','d'])
+
+    def test_sequence_of_char_and_consume_five_values_classes(self):
+        m = sm.Sequence([sm.CharTSM('a'), sm.ConsumeFiveValues(), sm.CharTSM('b')])
+        action = m.run()
+        self.assertEqual(action, ['a', None, None, None, None, 15, 'b'])
