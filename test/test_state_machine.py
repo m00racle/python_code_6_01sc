@@ -587,7 +587,7 @@ class TestSequenceClass(unittest.TestCase):
             "In: None Out: a Next State: (1, False)\n"+\
             "In: None Out: b Next State: (2, False)\n"+\
             "In: None Out: c Next State: (2, True)\n"
-        action = m.run()
+        action = m.run(verbose=True)
         # return the stdout to its default methods
         sys.stdout = sys.__stdout__
         self.assertEqual(action, ['a', 'b', 'c'], 'ACTION result is wrong')
@@ -596,10 +596,30 @@ class TestSequenceClass(unittest.TestCase):
     def test_hello_word_string_to_list_of_chars(self):
         hello = 'Hello World'
         m = sm.Sequence([sm.CharTSM(c) for c in hello])
-        action = m.run()
+        action = m.run(11) #run(11) because Hello World consist of 11 chars including the white space!
         self.assertEqual(action, ['H','e','l','l','o',' ','W','o','r','l','d'])
 
-    def test_sequence_of_char_and_consume_five_values_classes(self):
+    def test_sequence_transduce_of_char_and_consume_five_values_classes(self):
         m = sm.Sequence([sm.CharTSM('a'), sm.ConsumeFiveValues(), sm.CharTSM('b')])
-        action = m.run()
+        action = m.transduce(range(100))
         self.assertEqual(action, ['a', None, None, None, None, 15, 'b'])
+
+    def test_repeat_sequence_run_verbose(self):
+        m = sm.Repeat(sm.Sequence([sm.CharTSM(c) for c in 'abc']), 3)
+        clipper = io.StringIO()
+        sys.stdout = clipper
+        expected_printed = \
+            "Start state: (0, (0, False))\n"+\
+            "In: None Out: a Next State: (0, (1, False))\n"+\
+            "In: None Out: b Next State: (0, (2, False))\n"+\
+            "In: None Out: c Next State: (1, (0, False))\n"+\
+            "In: None Out: a Next State: (1, (1, False))\n"+\
+            "In: None Out: b Next State: (1, (2, False))\n"+\
+            "In: None Out: c Next State: (2, (0, False))\n"+\
+            "In: None Out: a Next State: (2, (1, False))\n"+\
+            "In: None Out: b Next State: (2, (2, False))\n"+\
+            "In: None Out: c Next State: (3, (0, False))\n"
+        action = m.run(verbose = True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, ['a','b','c','a','b','c','a','b','c'], "the ACTION is wrong")
+        self.assertEqual(clipper.getvalue(), expected_printed, "PRINT OUT is wrong")
