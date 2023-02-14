@@ -586,3 +586,19 @@ class Sequence(SM):
         self.startState = (0, self.smList[0].startState)
         # set the counter limit to the length of the smList
         self.n = len(smList)
+
+    def advancedIfDone(self, counter, smState):
+        while self.smList[counter].done(smState) and counter + 1 < self.n:
+            counter += 1
+            smState = self.smList[counter].startState
+        return (counter, smState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (counter, smState) = state
+        (smState, o) = self.smList[counter].getNextValues(smState, inp)
+        (counter, smState) = self.advancedIfDone(counter, smState)
+        return ((counter, smState), o)
+    
+    def done(self, state) -> bool:
+        (counter, smState) = state
+        return self.smList[counter].done(smState)
