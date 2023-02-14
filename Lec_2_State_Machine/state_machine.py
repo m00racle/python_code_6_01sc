@@ -571,3 +571,18 @@ class CharTSM(SM):
     
     def done(self, state) -> bool:
         return state
+
+class Sequence(SM):
+    """  
+    Run all SMs in the list sequentially one by one after one is done before the other
+    untill all SMs in the list is done.
+    given:
+    smList: list = list of SM to run sequentially
+
+    startState = (counter, smList[0].startState)
+    """
+    def __init__(self, smList: list) -> None:
+        self.smList = smList
+        self.startState = (0, self.smList[0].startState)
+        # set the counter limit to the length of the smList
+        self.n = len(smList)
