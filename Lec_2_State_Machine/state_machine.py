@@ -56,15 +56,16 @@ class SM:
         # prepare the state to be startState:
         result = []
         self.start()
-
-        if not verbose : return [self.step(inp) for inp in inps]
-
-        print(f"Start state: {self.state}")
+        
+        if verbose : print(f"Start state: {self.state}")
 
         for inp in inps:
+            if self.done(self.state) : break
+
             (s, o) = self.getNextValues(self.state, inp)
             
-            print(f"In: {inp} Out: {o} Next State: {s}")
+            if verbose : print(f"In: {inp} Out: {o} Next State: {s}")
+            
             result.append(o)
             self.state = s
         
@@ -188,6 +189,12 @@ class SM:
             return a * b
         else:
             raise TypeError(None)
+    
+    def done(self, state) -> bool:
+        """  
+        Default function to terminante the sequence of SM process
+        """
+        return False
     
 
 """  *************************
@@ -483,3 +490,171 @@ class Multiplier(SM):
             "other error raised"
         
         return (state, o)
+
+class ConsumeFiveValues(SM):
+    """  
+    iniVal = (count = 0, total = 0)
+    fn : s, i = (count + 1, total + inp)
+    fo : s, i = total + inp if count == 4 else None
+
+    -- if count is already 5 then break
+    """
+    def __init__(self, initVal=(0, 0)) -> None:
+        super().__init__(initVal)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (count, total) = state
+        if count == 4:
+            return ((count + 1, total + inp), total + inp)
+        else:
+            return ((count + 1, total + inp), None)
+    
+    def done(self, state) -> bool:
+        # check if the count (part of state) is 5,
+        # if yes the transduce is done
+        (count, total) = state
+        return count == 5
+
+class Repeat(SM):
+    """  
+    Given:
+    sm : SM = constituent state machine
+    n : int = how many times it should repeat (DEFAULT = None)
+    WARNING: left the n in Default value (None) can result infinite loop
+    state type = (count, sm state)
+    """
+    def __init__(self, sm: SM, n: int = None) -> None:
+        """  
+        full override of the init
+        """
+        self.sm = sm
+        self.n = n
+        self.startState = (0, self.sm.startState)
+    
+    def advanceIfDone(self, counter, smState)->tuple:
+        """  
+        add counter when sm is done
+        reset the sm state to sm.startState
+        return (counter, state)
+        """
+        while self.sm.done(smState) and not self.done((counter, smState)):
+            # while repeat is not done even as the constituen sm is done:
+            counter += 1
+            # reset the constituent sm back to its startState
+            smState = self.sm.startState
+        return (counter, smState)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (counter, smState) = state
+        (smState, o) = self.sm.getNextValues(smState, inp)
+        (counter, smState) = self.advanceIfDone(counter, smState)
+        return ((counter, smState), o)
+
+    def done(self, state) -> bool:
+        (counter, smState) = state
+        return counter == self.n
+
+
+class CharTSM(SM):
+    """  
+    Simple subclass of SM used to test Repeat class
+    Given:
+    c: str = character 
+    state = boolean
+    """
+    def __init__(self, c:str, initVal=False) -> None:
+        super().__init__(initVal)
+        self.c = c
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        return (True, self.c)
+    
+    def done(self, state) -> bool:
+        return state
+
+class Sequence(SM):
+    """  
+    Run all SMs in the list sequentially one by one after one is done before the other
+    untill all SMs in the list is done.
+    given:
+    smList: list = list of SM to run sequentially
+
+    startState = (counter, smList[0].startState)
+    """
+    def __init__(self, smList: list) -> None:
+        self.smList = smList
+        self.startState = (0, self.smList[0].startState)
+        # set the counter limit to the length of the smList
+        self.n = len(smList)
+
+    def advancedIfDone(self, counter, smState):
+        while self.smList[counter].done(smState) and counter + 1 < self.n:
+            counter += 1
+            smState = self.smList[counter].startState
+        return (counter, smState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (counter, smState) = state
+        (smState, o) = self.smList[counter].getNextValues(smState, inp)
+        (counter, smState) = self.advancedIfDone(counter, smState)
+        return ((counter, smState), o)
+    
+    def done(self, state) -> bool:
+        (counter, smState) = state
+        return self.smList[counter].done(smState)
+
+class RepeatUntil(SM):
+    """  
+    class RepeatUntil 
+    Given: 
+    condition: function = function to return boolean to define the limit is achieved
+    sm: SM = constituent state machine object
+
+    fn : s,i : (conditionTrue, smState)
+    fo : s,i : o
+    init state = (False, self.sm.startState)
+
+    condition : done when condition is met AND constituent SM is done (MUST BE BOTH)
+    """
+    def __init__(self, condition, sm:SM) -> None:
+        self.sm = sm # constituent SM
+        self.condition = condition # function when done is met.
+        self.startState = (False, self.sm.startState)
+
+    def advancedIfDone(self, condTrue, smState):
+        # repeat if self is not done but (AND) constituent is done.
+        if not self.done((condTrue, smState)) and self.sm.done(smState):
+            return (condTrue, self.sm.startState)
+        # else: just return the original condTrue and smState
+        return (condTrue, smState)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (condTrue, smState) = state
+        (smState, o) = self.sm.getNextValues(smState, inp)
+        condTrue = self.condition(inp)
+        # repeat if necessary
+        (condTrue, smState) = self.advancedIfDone(condTrue, smState)
+        return ((condTrue, smState), o)
+    
+    def done(self, state) -> bool:
+        (condTrue, smState) = state
+        return self.sm.done(smState) and condTrue
+
+
+class Until(RepeatUntil):
+    """  
+    class RepeatUntil subclass of Until subclass of SM
+    Given:
+    condition: function = function to return boolean define the limit is achieved
+    sm : SM = constitiuent state machine
+
+    fn : s,i : (conditionTrue, smState)
+    fo : s,i : o
+    init state = (False, self.sm.startState)
+
+    condition : done when condition is met OR constituent SM is done (which one is first)
+    """
+    # OVERRIDE: RepeatUntil(SM)
+    def done(self, state) -> bool:
+        (condTrue, smState) = state
+        return self.sm.done(smState) or condTrue

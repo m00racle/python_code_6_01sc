@@ -473,3 +473,241 @@ class TestMultiplierClass(unittest.TestCase):
         input = [2, (None, 'a'), (2, 'undefined'), 'undefined']
         # assert
         self.assertEqual(self.m.transduce(input), [None, None, None, None])
+
+class TestConsumeFiveValuesClass(unittest.TestCase):
+    """  
+    test ConcumeFiveValues class 
+    but the main focus is to test the def done function
+    """
+    def setUp(self) -> None:
+        self.smf = sm.ConsumeFiveValues()
+        self.inputs = [i for i in range(1,11)]
+    
+    def test_transduce_non_verbose_scenario(self):
+        self.assertEqual(self.smf.transduce(self.inputs), [None]*4 + [15])
+
+    def test_transduce_verbose_mode_scenario(self):
+        capture = io.StringIO()
+        sys.stdout = capture
+        expected_printout = \
+            "Start state: (0, 0)\n"+\
+            "In: 1 Out: None Next State: (1, 1)\n"+\
+            "In: 2 Out: None Next State: (2, 3)\n"+\
+            "In: 3 Out: None Next State: (3, 6)\n"+\
+            "In: 4 Out: None Next State: (4, 10)\n"+\
+            "In: 5 Out: 15 Next State: (5, 15)\n"
+        # action
+        self.smf.transduce(self.inputs, verbose=True)
+        sys.stdout = sys.__stdout__
+        # assert
+        self.assertEqual(capture.getvalue(), expected_printout)
+
+class TestRepeatClass(unittest.TestCase):
+    """  
+    Test case scenarion for Repeat SM
+    """
+    def setUp(self) -> None:
+        self.ch = sm.CharTSM('a')
+    
+    def test_charTSM_class_verbose(self):
+        capout = io.StringIO()
+        sys.stdout = capout
+        expected_out = \
+            "Start state: False\n"+\
+            "In: None Out: a Next State: True\n"
+        # action
+        result = self.ch.run(verbose=True)
+        # give back the stdout to the default
+        sys.stdout = sys.__stdout__
+        # assert
+        self.assertEqual(result, ['a'], "result is WORNG")
+        self.assertEqual(capout.getvalue(), expected_out, "Print out is WRONG")
+
+    def test_repeat_class_to_charTSM_non_verbose(self):
+        rep = sm.Repeat(self.ch, 4)
+        self.assertEqual(rep.run(), ['a', 'a', 'a', 'a'])
+
+    def test_repeat_class_to_charTSM_verbose_scenario(self):
+        scanout = io.StringIO()
+        sys.stdout = scanout
+        expected_out = \
+            "Start state: (0, False)\n"+\
+            "In: None Out: a Next State: (1, False)\n"+\
+            "In: None Out: a Next State: (2, False)\n"+\
+            "In: None Out: a Next State: (3, False)\n"+\
+            "In: None Out: a Next State: (4, False)\n"
+        
+        # action
+        sm.Repeat(sm.CharTSM('a'), 4).run(verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(scanout.getvalue(), expected_out)
+
+    def test_counter_only_incremented_when_constituent_is_done(self):
+        cap = io.StringIO()
+        # handouver stdout to cap
+        sys.stdout = cap
+        expected_out = \
+            "Start state: (0, (0, 0))\n"+\
+            "In: 0 Out: None Next State: (0, (1, 0))\n"+\
+            "In: 1 Out: None Next State: (0, (2, 1))\n"+\
+            "In: 2 Out: None Next State: (0, (3, 3))\n"+\
+            "In: 3 Out: None Next State: (0, (4, 6))\n"+\
+            "In: 4 Out: 10 Next State: (1, (0, 0))\n"+\
+            "In: 5 Out: None Next State: (1, (1, 5))\n"+\
+            "In: 6 Out: None Next State: (1, (2, 11))\n"+\
+            "In: 7 Out: None Next State: (1, (3, 18))\n"+\
+            "In: 8 Out: None Next State: (1, (4, 26))\n"+\
+            "In: 9 Out: 35 Next State: (2, (0, 0))\n"+\
+            "In: 10 Out: None Next State: (2, (1, 10))\n"+\
+            "In: 11 Out: None Next State: (2, (2, 21))\n"+\
+            "In: 12 Out: None Next State: (2, (3, 33))\n"+\
+            "In: 13 Out: None Next State: (2, (4, 46))\n"+\
+            "In: 14 Out: 60 Next State: (3, (0, 0))\n"
+        # action
+        result = sm.Repeat(sm.ConsumeFiveValues(), 3).transduce(range(100), verbose=True)
+        # handover back the sys stdout to default __stdout__
+        sys.stdout = sys.__stdout__
+        # assert
+        self.assertEqual(result,\
+             [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60],\
+                "Result is wrong")
+        self.assertEqual(cap.getvalue(), expected_out, "PRINT OUT is wrong")
+
+class TestSequenceClass(unittest.TestCase):
+    """  
+    test for the sequence class
+    """
+    def test_basic_sequence_3_charTSM_verbose(self):
+        # preps
+        m = sm.Sequence([sm.CharTSM('a'), sm.CharTSM('b'), sm.CharTSM('c')])
+        scanner = io.StringIO()
+        sys.stdout = scanner
+        expected_output = \
+            "Start state: (0, False)\n"+\
+            "In: None Out: a Next State: (1, False)\n"+\
+            "In: None Out: b Next State: (2, False)\n"+\
+            "In: None Out: c Next State: (2, True)\n"
+        action = m.run(verbose=True)
+        # return the stdout to its default methods
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, ['a', 'b', 'c'], 'ACTION result is wrong')
+        self.assertEqual(scanner.getvalue(), expected_output, "verbose scanner is wrong")
+
+    def test_hello_word_string_to_list_of_chars(self):
+        hello = 'Hello World'
+        m = sm.Sequence([sm.CharTSM(c) for c in hello])
+        action = m.run(11) #run(11) because Hello World consist of 11 chars including the white space!
+        self.assertEqual(action, ['H','e','l','l','o',' ','W','o','r','l','d'])
+
+    def test_sequence_transduce_of_char_and_consume_five_values_classes(self):
+        m = sm.Sequence([sm.CharTSM('a'), sm.ConsumeFiveValues(), sm.CharTSM('b')])
+        action = m.transduce(range(100))
+        self.assertEqual(action, ['a', None, None, None, None, 15, 'b'])
+
+    def test_repeat_sequence_run_verbose(self):
+        m = sm.Repeat(sm.Sequence([sm.CharTSM(c) for c in 'abc']), 3)
+        clipper = io.StringIO()
+        sys.stdout = clipper
+        expected_printed = \
+            "Start state: (0, (0, False))\n"+\
+            "In: None Out: a Next State: (0, (1, False))\n"+\
+            "In: None Out: b Next State: (0, (2, False))\n"+\
+            "In: None Out: c Next State: (1, (0, False))\n"+\
+            "In: None Out: a Next State: (1, (1, False))\n"+\
+            "In: None Out: b Next State: (1, (2, False))\n"+\
+            "In: None Out: c Next State: (2, (0, False))\n"+\
+            "In: None Out: a Next State: (2, (1, False))\n"+\
+            "In: None Out: b Next State: (2, (2, False))\n"+\
+            "In: None Out: c Next State: (3, (0, False))\n"
+        action = m.run(verbose = True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, ['a','b','c','a','b','c','a','b','c'], "the ACTION is wrong")
+        self.assertEqual(clipper.getvalue(), expected_printed, "PRINT OUT is wrong")
+
+class TestUntilAndRepeatUntilClasses(unittest.TestCase):
+    """  
+    This test two class types : Until and RepeatUntil
+    NOTE: for practicality the condition functions for all these cases will be in lambda function
+    """
+    
+    def test_repeat_until_verbose_with_lambda_larger_than_10(self):
+        m = sm.RepeatUntil(lambda x : x > 10, sm.ConsumeFiveValues())
+        clipout = io.StringIO()
+        sys.stdout = clipout
+        expected_printout = \
+            "Start state: (False, (0, 0))\n"+\
+            "In: 0 Out: None Next State: (False, (1, 0))\n"+\
+            "In: 1 Out: None Next State: (False, (2, 1))\n"+\
+            "In: 2 Out: None Next State: (False, (3, 3))\n"+\
+            "In: 3 Out: None Next State: (False, (4, 6))\n"+\
+            "In: 4 Out: 10 Next State: (False, (0, 0))\n"+\
+            "In: 5 Out: None Next State: (False, (1, 5))\n"+\
+            "In: 6 Out: None Next State: (False, (2, 11))\n"+\
+            "In: 7 Out: None Next State: (False, (3, 18))\n"+\
+            "In: 8 Out: None Next State: (False, (4, 26))\n"+\
+            "In: 9 Out: 35 Next State: (False, (0, 0))\n"+\
+            "In: 10 Out: None Next State: (False, (1, 10))\n"+\
+            "In: 11 Out: None Next State: (True, (2, 21))\n"+\
+            "In: 12 Out: None Next State: (True, (3, 33))\n"+\
+            "In: 13 Out: None Next State: (True, (4, 46))\n"+\
+            "In: 14 Out: 60 Next State: (True, (5, 60))\n"
+        action = m.transduce(range(20), verbose=True)
+        # action pass 0 to 20 as inputs to transduce of consumeFiveVaues class
+        sys.stdout = sys.__stdout__ # return the control of standard output to default
+        self.assertEqual(action, [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60], "RESULT is WRONG")
+        self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
+
+    def test_until_verbose_with_lambda_done_because_constituent_sm_not_condition(self):
+        m = sm.Until(lambda x : x > 10, sm.ConsumeFiveValues())
+        clipout = io.StringIO()
+        sys.stdout = clipout
+        expected_printout = \
+            "Start state: (False, (0, 0))\n"+\
+            "In: 0 Out: None Next State: (False, (1, 0))\n"+\
+            "In: 1 Out: None Next State: (False, (2, 1))\n"+\
+            "In: 2 Out: None Next State: (False, (3, 3))\n"+\
+            "In: 3 Out: None Next State: (False, (4, 6))\n"+\
+            "In: 4 Out: 10 Next State: (False, (5, 10))\n"
+        action = m.transduce(range(20), verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, [None, None, None, None, 10], "RESULT is WRONG")
+        self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
+
+    def test_until_verbose_with_lambda_done_because_condition_not_constituent_sm(self):
+        m = sm.Until(lambda x : x >= 2, sm.ConsumeFiveValues())
+        clipout = io.StringIO()
+        sys.stdout = clipout
+        expected_printout = \
+            "Start state: (False, (0, 0))\n"+\
+            "In: 0 Out: None Next State: (False, (1, 0))\n"+\
+            "In: 1 Out: None Next State: (False, (2, 1))\n"+\
+            "In: 2 Out: None Next State: (True, (3, 3))\n"
+        action = m.transduce(range(20), verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, [None]*3, "RESULT is WRONG")
+        self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
+
+    def test_until_using_repeat_constituent_sm_verbose(self):
+        m = sm.Until(lambda x : x > 10, sm.Repeat(sm.ConsumeFiveValues()))
+        # NOTE: sm.Repeat without n (n= None) will repeat forever! Make sure lambda from sm.Until is VALID
+        #       TO PREVENT INFINITE LOOP
+        expected_printout = \
+            "Start state: (False, (0, (0, 0)))\n"+\
+            "In: 0 Out: None Next State: (False, (0, (1, 0)))\n"+\
+            "In: 1 Out: None Next State: (False, (0, (2, 1)))\n"+\
+            "In: 2 Out: None Next State: (False, (0, (3, 3)))\n"+\
+            "In: 3 Out: None Next State: (False, (0, (4, 6)))\n"+\
+            "In: 4 Out: 10 Next State: (False, (1, (0, 0)))\n"+\
+            "In: 5 Out: None Next State: (False, (1, (1, 5)))\n"+\
+            "In: 6 Out: None Next State: (False, (1, (2, 11)))\n"+\
+            "In: 7 Out: None Next State: (False, (1, (3, 18)))\n"+\
+            "In: 8 Out: None Next State: (False, (1, (4, 26)))\n"+\
+            "In: 9 Out: 35 Next State: (False, (2, (0, 0)))\n"+\
+            "In: 10 Out: None Next State: (False, (2, (1, 10)))\n"+\
+            "In: 11 Out: None Next State: (True, (2, (2, 21)))\n"
+        clipout = io.StringIO()
+        sys.stdout = clipout
+        action = m.transduce(range(20), verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, [None]*4 + [10] + [None]*4 +[35] + [None]*2, "RESULT is wrong")
+        self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")

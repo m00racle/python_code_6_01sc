@@ -1,0 +1,39 @@
+Exercise 4.13. 
+Monty P. thinks that the following call >>> sm.Repeat(ConsumeFiveValues(), 3).transduce(range(100)) will generate a sequence of 14 Nones followed by the sum of the first 15 integers (starting at 0). R. Reticulatis disagrees. Who is right and why?
+
+Answer:
+def repeat_consume_five_values(verbose=False):
+    """  
+    run test repeat on consume five values 3 times
+    """
+    print(f'repeat consume five values 3 times= {sm.Repeat(sm.ConsumeFiveValues(),3).transduce(range(100), verbose)}')
+
+Result:
+$ f:/Code/code_6_01sc/.venv/Scripts/python.exe f:/Code/code_6_01sc/Lec_2_State_Machine/run.py
+run on: 13-02-2023 08:22:59
+
+repeat consume five values 3 times= [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60]
+
+NOTE: But this is still a good case to analyze further step by step.
+
+Result in verbose mode:
+$ f:/Code/code_6_01sc/.venv/Scripts/python.exe f:/Code/code_6_01sc/Lec_2_State_Machine/run.py
+run on: 13-02-2023 08:25:08
+
+Start state: (0, (0, 0))
+In: 0 Out: None Next State: (0, (1, 0))
+In: 1 Out: None Next State: (0, (2, 1))
+In: 2 Out: None Next State: (0, (3, 3))
+In: 3 Out: None Next State: (0, (4, 6))
+In: 4 Out: 10 Next State: (1, (0, 0))
+In: 5 Out: None Next State: (1, (1, 5))
+In: 6 Out: None Next State: (1, (2, 11))
+In: 7 Out: None Next State: (1, (3, 18))
+In: 8 Out: None Next State: (1, (4, 26))
+In: 9 Out: 35 Next State: (2, (0, 0))
+In: 10 Out: None Next State: (2, (1, 10))
+In: 11 Out: None Next State: (2, (2, 21))
+In: 12 Out: None Next State: (2, (3, 33))
+In: 13 Out: None Next State: (2, (4, 46))
+In: 14 Out: 60 Next State: (3, (0, 0))
+repeat consume five values 3 times= [None, None, None, None, 10, None, None, None, None, 35, None, None, None, None, 60]
