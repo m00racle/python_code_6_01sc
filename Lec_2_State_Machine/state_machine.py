@@ -623,7 +623,7 @@ class RepeatUntil(SM):
 
     def advancedIfDone(self, condTrue, smState):
         # repeat if cond is not true
-        if not self.done((condTrue, smState)):
+        if self.sm.done(smState) and not condTrue:
             smState = self.sm.startState
         return (condTrue, smState)
     
