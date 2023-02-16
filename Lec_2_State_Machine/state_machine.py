@@ -653,4 +653,9 @@ class Until(RepeatUntil):
 
     condition : done when condition is met OR constituent SM is done (which one is first)
     """
-    # TODO: done function override
+    def advancedIfDone(self, condTrue, smState):
+        return (condTrue, smState)
+
+    def done(self, state) -> bool:
+        (condTrue, smState) = state
+        return self.sm.done(smState) or condTrue
