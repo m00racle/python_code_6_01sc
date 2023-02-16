@@ -622,9 +622,10 @@ class RepeatUntil(SM):
         self.startState = (False, self.sm.startState)
 
     def advancedIfDone(self, condTrue, smState):
-        # repeat if cond is not true
-        if self.sm.done(smState) and not condTrue:
-            smState = self.sm.startState
+        # repeat if self is not done but (AND) constituent is done.
+        if not self.done((condTrue, smState)) and self.sm.done(smState):
+            return (condTrue, self.sm.startState)
+        # else: just return the original condTrue and smState
         return (condTrue, smState)
     
     def getNextValues(self, state, inp, **kwargs) -> tuple:
@@ -653,9 +654,7 @@ class Until(RepeatUntil):
 
     condition : done when condition is met OR constituent SM is done (which one is first)
     """
-    def advancedIfDone(self, condTrue, smState):
-        return (condTrue, smState)
-
+    # OVERRIDE: RepeatUntil(SM)
     def done(self, state) -> bool:
         (condTrue, smState) = state
         return self.sm.done(smState) or condTrue
