@@ -686,3 +686,26 @@ class TestUntilAndRepeatUntilClasses(unittest.TestCase):
         sys.stdout = sys.__stdout__
         self.assertEqual(action, [None]*3, "RESULT is WRONG")
         self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
+
+    def test_until_using_repeat_constituent_sm_verbose(self):
+        m = sm.Until(lambda x : x > 10, sm.Repeat(sm.ConsumeFiveValues()))
+        expected_printout = \
+            "Start state: (False, (0, (0, 0)))\n"+\
+            "In: 0 Out: None Next State: (False, (0, (1, 0)))\n"+\
+            "In: 1 Out: None Next State: (False, (0, (2, 1)))\n"+\
+            "In: 2 Out: None Next State: (False, (0, (3, 3)))\n"+\
+            "In: 3 Out: None Next State: (False, (0, (4, 6)))\n"+\
+            "In: 4 Out: 10 Next State: (False, (1, (0, 0)))\n"+\
+            "In: 5 Out: None Next State: (False, (1, (1, 5)))\n"+\
+            "In: 6 Out: None Next State: (False, (1, (2, 11)))\n"+\
+            "In: 7 Out: None Next State: (False, (1, (3, 18)))\n"+\
+            "In: 8 Out: None Next State: (False, (1, (4, 26)))\n"+\
+            "In: 9 Out: 35 Next State: (False, (2, (0, 0)))\n"+\
+            "In: 10 Out: None Next State: (False, (2, (1, 10)))\n"+\
+            "In: 11 Out: None Next State: (True, (2, (2, 21)))\n"
+        clipout = io.StringIO()
+        sys.stdout = clipout
+        action = m.transduce(range(20), verbose=True)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(action, [None]*4 + [10] + [None]*4 +[35] + [None]*2, "RESULT is wrong")
+        self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
