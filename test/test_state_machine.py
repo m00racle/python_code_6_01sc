@@ -689,6 +689,8 @@ class TestUntilAndRepeatUntilClasses(unittest.TestCase):
 
     def test_until_using_repeat_constituent_sm_verbose(self):
         m = sm.Until(lambda x : x > 10, sm.Repeat(sm.ConsumeFiveValues()))
+        # NOTE: sm.Repeat without n (n= None) will repeat forever! Make sure lambda from sm.Until is VALID
+        #       TO PREVENT INFINITE LOOP
         expected_printout = \
             "Start state: (False, (0, (0, 0)))\n"+\
             "In: 0 Out: None Next State: (False, (0, (1, 0)))\n"+\
