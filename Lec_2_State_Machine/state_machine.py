@@ -602,3 +602,55 @@ class Sequence(SM):
     def done(self, state) -> bool:
         (counter, smState) = state
         return self.smList[counter].done(smState)
+
+class RepeatUntil(SM):
+    """  
+    class RepeatUntil 
+    Given: 
+    condition: function = function to return boolean to define the limit is achieved
+    sm: SM = constituent state machine object
+
+    fn : s,i : (conditionTrue, smState)
+    fo : s,i : o
+    init state = (False, self.sm.startState)
+
+    condition : done when condition is met AND constituent SM is done (MUST BE BOTH)
+    """
+    def __init__(self, condition, sm:SM) -> None:
+        self.sm = sm # constituent SM
+        self.condition = condition # function when done is met.
+        self.startState = (False, self.sm.startState)
+
+    def advancedIfDone(self, condTrue, smState):
+        # repeat if cond is not true
+        if not self.done((condTrue, smState)):
+            smState = self.sm.startState
+        return (condTrue, smState)
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (condTrue, smState) = state
+        (smState, o) = self.sm.getNextValues(smState, inp)
+        condTrue = self.condition(inp)
+        # repeat if necessary
+        (condTrue, smState) = self.advancedIfDone(condTrue, smState)
+        return ((condTrue, smState), o)
+    
+    def done(self, state) -> bool:
+        (condTrue, smState) = state
+        return self.sm.done(smState) and condTrue
+
+
+class Until(RepeatUntil):
+    """  
+    class RepeatUntil subclass of Until subclass of SM
+    Given:
+    condition: function = function to return boolean define the limit is achieved
+    sm : SM = constitiuent state machine
+
+    fn : s,i : (conditionTrue, smState)
+    fo : s,i : o
+    init state = (False, self.sm.startState)
+
+    condition : done when condition is met OR constituent SM is done (which one is first)
+    """
+    # TODO: done function override
