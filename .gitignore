@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# buffer file (emacs)
+*.py~
+
 # C extensions
 *.so
 
