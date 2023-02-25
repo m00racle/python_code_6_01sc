@@ -37,4 +37,6 @@ class Test_extract_tags(unittest.TestCase):
             s.extractTags('this [example [of what ] we want to] test')
 
         self.assertTrue("invalid tag detected: no enclosure" in e.exception.args)
-    
+
+if __name__ == '__main__':
+    unittest.main()

@@ -39,3 +39,6 @@ class Test_fruit_class(unittest.TestCase):
             self.assertEqual(self.salad.serve(), 'enjoy')
         
         self.assertEqual(self.salad.serve(), 'sorry')
+
+if __name__ == '__main__':
+    unittest.main()

@@ -711,3 +711,6 @@ class TestUntilAndRepeatUntilClasses(unittest.TestCase):
         sys.stdout = sys.__stdout__
         self.assertEqual(action, [None]*4 + [10] + [None]*4 +[35] + [None]*2, "RESULT is wrong")
         self.assertEqual(clipout.getvalue(), expected_printout, "PRINT OUT is wrong")
+
+if __name__ == '__main__':
+    unittest.main()

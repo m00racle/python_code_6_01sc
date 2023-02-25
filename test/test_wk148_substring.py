@@ -25,4 +25,5 @@ class Test_substring(unittest.TestCase):
     def test_substring_in_the_end(self):
         self.assertTrue(s.isSubstring('barfotfoo', 'foo'))
 
-    
+if __name__ == '__main__':
+    unittest.main()

@@ -176,3 +176,6 @@ class TestClassIf(unittest.TestCase):
         sys.stdout = sys.__stdout__
         # assert
         self.assertEqual(capture.getvalue(), expected_print)
+
+if __name__ == '__main__':
+    unittest.main()

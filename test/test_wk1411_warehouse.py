@@ -75,3 +75,6 @@ class Test_warehouse(unittest.TestCase):
         # test the integrrity of the totals dict
         self.assertEqual(self.w.lookoup('b'), 20, "totals b compormised should be 20")
         self.assertTrue("unidentified order given" in e.exception.args)
+
+if __name__ == '__main__':
+    unittest.main()

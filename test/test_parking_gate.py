@@ -154,4 +154,6 @@ class TestFreeGate(unittest.TestCase):
         # assert
         self.assertEqual(result, outputs, "OUTPUT LIST INCORRECT")
         self.assertEqual(cap.getvalue(), printout, "VERBOSE INCORRECT")
-        
+
+if __name__ == '__main__':
+    unittest.main()

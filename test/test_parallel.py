@@ -320,4 +320,6 @@ class TestParallelAdd(unittest.TestCase):
         # assert:
         self.assertEqual(result, expected_result, "THE OUTPUT INCORRECT")
         self.assertEqual(printed_out, should_print, "PRINTED OUT INCORRECT")
-        
+
+if __name__ == '__main__':
+    unittest.main()

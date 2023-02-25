@@ -106,3 +106,6 @@ class TestFeedbackSub(unittest.TestCase):
         fb = FeedbackSub(Wire(), Wire())
         # assert
         self.assertEqual(fb.transduce(range(10)), [None] * 10)
+
+if __name__ == '__main__':
+    unittest.main()

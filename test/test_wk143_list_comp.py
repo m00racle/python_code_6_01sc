@@ -25,3 +25,6 @@ class Test_list_comp(unittest.TestCase):
     def test_sum_abs_prod_func_commutative(self):
         self.assertTrue(s.sumAbsProd([1,-2,3],[-4,5]) > 0, "The return is still in default")
         self.assertEqual(s.sumAbsProd([1,-2,3],[-4,5]), s.sumAbsProd([-4,5],[1,-2,3]))
+
+if __name__ == '__main__':
+    unittest.main()

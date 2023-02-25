@@ -142,4 +142,6 @@ class Test_designLab01Work(unittest.TestCase):
             (self.p1 * self.p1).roots()
 
         self.assertTrue("Order too high to solve for roots" in e.exception.args)
-    
+
+if __name__ == '__main__':
+    unittest.main()

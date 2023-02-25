@@ -21,5 +21,6 @@ class Test_Palindrome(unittest.TestCase):
 
     def test_is_palindrome_false(self):
         self.assertFalse(s.isPalindrome('a man a plan a canal panama'))
-    
-    
+
+if __name__ == '__main__':
+    unittest.main()

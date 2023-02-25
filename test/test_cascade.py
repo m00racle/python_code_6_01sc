@@ -64,3 +64,6 @@ class TestIncrementClass(unittest.TestCase):
         inc = Increment(k)
         # assert
         self.assertEqual(inc.transduce(inputs), expected_outputs)
+
+if __name__ == '__main__':
+    unittest.main()
