@@ -62,13 +62,8 @@ class SM:
 
         for inp in inps:
             if self.done(self.state) : break
-
-            (s, o) = self.getNextValues(self.state, inp)
-            
-            if verbose : print(f"In: {inp} Out: {o} Next State: {s}")
-            
-            result.append(o)
-            self.state = s
+            # if not done keep the step:
+            result.append(self.step(inp, verbose))
         
         return result
 
