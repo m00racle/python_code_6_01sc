@@ -39,12 +39,13 @@ class SM:
     def setState(self, state):
         self.state = state
     
-    def step(self, inp):
+    def step(self, inp, verbose = False):
         """  
         Change the instance state
         Returns the output 
         """
         (s, o) = self.getNextValues(self.state, inp)
+        if verbose : print(f"In: {inp} Out: {o} Next State: {s}")
         self.state = s
         return o
 
