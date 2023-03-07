@@ -1,0 +1,13 @@
+"""  
+sub classes of RobotSM
+different types of robot controller
+this is describe what job the robot is intended to do.
+"""
+
+from robot_sm import RobotSM
+import robot_io as io
+
+# test robot just move forward.
+class TestForward(RobotSM):
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        return (None, io.Action(self.robot, fvel=1))
