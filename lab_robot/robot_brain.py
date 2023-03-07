@@ -9,7 +9,7 @@ import robot_io as io
 from math import pi
 
 # specify the robot spec:
-robot_spec = spec.RotateTSM #TODO: chage this to specify the robot.
+robot_spec = spec.RotateTSM2 #TODO: chage this to specify the robot.
 # brai options:
 verbose_ = True
 cheat_ = False
@@ -20,7 +20,7 @@ robot = PioneerMod()
 #  This function is called when the brain is loaded
 def on_load():
     # set the robot initial behavior:
-    robot.behavior = robot_spec(robot, -pi/2)
+    robot.behavior = robot_spec(robot, 3/2*pi)
 
 #  This function is called when the start button is pushed
 def on_start():

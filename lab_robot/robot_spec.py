@@ -64,3 +64,29 @@ class RotateTSM(RobotSM):
             (thetaTarget, thetaLast) = state
             return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
                 self.distEpsilon, self.angleEpsilon)
+
+class RotateTSM2(RotateTSM):
+    """  
+    TODO: 
+    Change this machine so that it rotates through an angle,
+    so you could give it 2 pi or minus 2 pi to have it rotate all the way around
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        if self.done(state): return (state, io.Action(self.robot))
+        currentTheta = inp.odometry.t
+        if state == "start":
+            # set the target theta
+            thetaTarget = normalize_angle_360(currentTheta + self.deltaHeading)
+        else:
+            (thetaTarget, thetaLast) = state
+        newState = (thetaTarget, currentTheta)
+        action = io.Action(self.robot, rvel= self.rotationalGain * normalize_angle_360(thetaTarget - currentTheta))
+        return (newState, action)
+
+    def done(self, state) -> bool:
+        if state == 'start':
+            return False
+        else:
+            (thetaTarget, thetaLast) = state
+            return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
+                self.distEpsilon, self.angleEpsilon)
