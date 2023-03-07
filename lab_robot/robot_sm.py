@@ -4,6 +4,7 @@ all state machine represent the robot controls
 """
 
 from soar.robot.base import BaseRobot
+from robot_PioneerMod import PioneerMod
 import robot_io as io
 
 
@@ -13,7 +14,7 @@ class RobotSM:
     Thus it is not meant to be instantiated to create and object
     Hence this will be used as blueprint to create another sub - class
     """
-    def __init__(self, robot: BaseRobot, initVal = 'start') -> None:
+    def __init__(self, robot: PioneerMod, initVal = 'start') -> None:
         """  
         initialize object type SM 
         must provides start state

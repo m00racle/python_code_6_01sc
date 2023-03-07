@@ -11,7 +11,14 @@ from math import pi
 # test robot just move forward.
 class TestForward(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
-        return (None, io.Action(self.robot, fvel=1))
+        if self.done(state): return (self.robot.odometry.x, io.Action(self.robot, fvel=0.0))
+        return (self.robot.odometry.x, io.Action(self.robot, fvel=1.0))
+    
+    def done(self, state) -> bool:
+        if state == "start": return False
+        if state >= 2 : return True
+        return False
+
 
 class TestRotateForward(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
@@ -19,4 +26,11 @@ class TestRotateForward(RobotSM):
 
 class TestRotate(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
-        return (None, io.Action(self.robot, rvel=pi/2))
+        if self.done(state): return (self.robot.odometry.t, io.Action(self.robot, rvel=0))
+        theta = self.robot.odometry.t
+        return (theta, io.Action(self.robot, rvel=pi/2))
+    
+    def done(self, state) -> bool:
+        if state == "start" : return False
+        if state >= pi : return True
+        return False
