@@ -37,6 +37,7 @@ class SensorInput:
 
     def __init__(self, robot:PioneerMod, cheat=False) -> None:
         # self.robot = robot
+        self.cheat = cheat
         self.odometry = robot.pose if cheat else robot.odometry
         self.sonars = robot.sonars # sonars is a function NOT attribute of PioneerMod
 

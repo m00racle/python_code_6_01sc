@@ -2,7 +2,8 @@
 Modify Pioneer Robot
 """
 from soar.robot.pioneer import PioneerRobot
-from math import sin, cos
+from math import sqrt
+from soar.sim.geometry import normalize_angle_180
 
 # create class odometry to circumvent the Pose challenge:
 class Odometry:
@@ -15,8 +16,11 @@ class Odometry:
         return '(' + str(self.x) + ', ' + str(self.y) + ', ' + str(self.t) + ')'
 
     def __getitem__(self, val):
+        """  
+        Make odometry instance act like tuple
+        Indexable and Subscriptable
+        """
         return self.xyt_tuple()[val]
-
 
     def xyt_tuple(self):
         """  
@@ -31,6 +35,23 @@ class Odometry:
         returns: Odometry 
         """
         return Odometry(self.x + other[0], self.y + other[1], self.t + other[2])
+
+    def is_near(self, other: tuple , dist_eps: float, angle_eps: float)->bool:
+        """  
+        Args:
+        other: tuple or Odometry type = the target x, y, t
+        dist_eps: float = The distance epsilon within which to consider the odometry is close
+        angle_eps : float = The angle epsilon
+
+        Returns: bool = True if the distance within dist_eps and  normalized difference between the angle
+        is within angle_eps
+        """
+        # finding distance
+        distance = sqrt(abs(other[0] - self[0])**2 + abs(other[1] - self[1])**2)
+        dist_angle = abs(normalize_angle_180(self[2] - other[2]))
+
+        return distance < dist_eps and dist_angle < angle_eps
+
 
 
 # modify PioneerRobot to have odometry:
