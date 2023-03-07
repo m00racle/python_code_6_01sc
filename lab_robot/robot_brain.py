@@ -2,15 +2,19 @@
 Robot Brain and controllers
 """
 
-from soar.robot.pioneer import PioneerRobot
+# from soar.robot.pioneer import PioneerRobot
+from robot_PioneerMod import PioneerMod
 import robot_spec as spec
 import robot_io as io
 
 # specify the robot spec:
 robot_spec = spec.TestForward #TODO: chage this to specify the robot.
+# brai options:
+verbose_ = True
+cheat_ = False
 
 # set the the robot
-robot = PioneerRobot()
+robot = PioneerMod()
 
 #  This function is called when the brain is loaded
 def on_load():
@@ -22,9 +26,7 @@ def on_start():
 
 #  This function is called every step_duration seconds. By default, it is called 10 times/second
 def on_step(step_duration):
-    # for testing only
-    print(f'robot data: {robot.to_dict()}')
-    robot.behavior.step(io.SensorInput(robot),verbose=True).execute()
+    robot.behavior.step(io.SensorInput(robot, cheat=cheat_),verbose=verbose_).execute()
 
 # This function is called when the stop button is pushed
 def on_stop():
