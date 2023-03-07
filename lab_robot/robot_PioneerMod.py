@@ -13,6 +13,17 @@ class Odometry:
 
     def __str__(self) -> str:
         return '(' + str(self.x) + ', ' + str(self.y) + ', ' + str(self.t) + ')'
+
+    def __getitem__(self, val):
+        return self.xyt_tuple()[val]
+
+
+    def xyt_tuple(self):
+        """  
+        return tuple of x, y, theta 
+        used to make subscriptable Odometry
+        """
+        return self.x, self.y, self.t
         
     def transform(self, other):
         """  

@@ -28,7 +28,7 @@ def on_start():
 def on_step(step_duration):
     robot.behavior.step(io.SensorInput(robot, cheat=cheat_),verbose=verbose_).execute()
     # TEST:
-    print(f"x pos: {robot.pose.x}")
+    print(f"x pos: {robot.pose[0]} vs x odo : {robot.odometry[0]}")
 
 # This function is called when the stop button is pushed
 def on_stop():
