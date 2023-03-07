@@ -11,3 +11,7 @@ import robot_io as io
 class TestForward(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         return (None, io.Action(self.robot, fvel=1))
+
+class TestRotateForward(RobotSM):
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        return (None, io.Action(self.robot, rvel=-1, fvel=1))

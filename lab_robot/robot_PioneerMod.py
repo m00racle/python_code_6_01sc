@@ -34,16 +34,13 @@ class PioneerMod(PioneerRobot):
         super().__init__(**options)
     
     def on_step(self, duration):
-        # update odometry:
-        if self.simulated:
-            theta = self.pose[2]
-            d_t = self.rv*duration
-            new_theta = theta + d_t
-            if self.rv != 0:
-                d_x = self.fv*(sin(new_theta)-sin(theta))/self.rv
-                d_y = self.fv*(cos(theta)-cos(new_theta))/self.rv
-            else:
-                d_x, d_y = self.fv*cos(theta)*duration, self.fv*sin(theta)*duration
-            newOdo = self.odometry.transform((d_x, d_y, d_t))
+        """  
+        Transform odometry based on the changes of pose before and after the superclass updates:
+        """
+        start_pose = self.pose
         super().on_step(duration)
+        od_x = self.pose.x - start_pose.x
+        od_y = self.pose.y - start_pose.y
+        od_t = self.pose.t - start_pose.t
+        newOdo = self.odometry.transform((od_x, od_y, od_t))
         self.odometry = newOdo

@@ -8,7 +8,7 @@ import robot_spec as spec
 import robot_io as io
 
 # specify the robot spec:
-robot_spec = spec.TestForward #TODO: chage this to specify the robot.
+robot_spec = spec.TestRotateForward #TODO: chage this to specify the robot.
 # brai options:
 verbose_ = True
 cheat_ = False
