@@ -20,7 +20,7 @@ robot = PioneerMod()
 #  This function is called when the brain is loaded
 def on_load():
     # set the robot initial behavior:
-    robot.behavior = robot_spec(robot, 3/2*pi)
+    robot.behavior = robot_spec(robot, -2*pi)
 
 #  This function is called when the start button is pushed
 def on_start():

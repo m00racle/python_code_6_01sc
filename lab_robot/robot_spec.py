@@ -76,11 +76,11 @@ class RotateTSM2(RotateTSM):
         currentTheta = inp.odometry.t
         if state == "start":
             # set the target theta
-            thetaTarget = normalize_angle_360(currentTheta + self.deltaHeading)
+            thetaTarget = (currentTheta + self.deltaHeading)
         else:
             (thetaTarget, thetaLast) = state
         newState = (thetaTarget, currentTheta)
-        action = io.Action(self.robot, rvel= self.rotationalGain * normalize_angle_360(thetaTarget - currentTheta))
+        action = io.Action(self.robot, rvel= self.rotationalGain * (thetaTarget - currentTheta))
         return (newState, action)
 
     def done(self, state) -> bool:
@@ -88,5 +88,6 @@ class RotateTSM2(RotateTSM):
             return False
         else:
             (thetaTarget, thetaLast) = state
-            return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
-                self.distEpsilon, self.angleEpsilon)
+            # return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
+            #     self.distEpsilon, self.angleEpsilon)
+            return abs(thetaTarget - thetaLast) < self.angleEpsilon
