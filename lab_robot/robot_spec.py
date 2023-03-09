@@ -82,12 +82,4 @@ class RotateTSM2(RotateTSM):
         newState = (thetaTarget, currentTheta)
         action = io.Action(self.robot, rvel= self.rotationalGain * (thetaTarget - currentTheta))
         return (newState, action)
-
-    def done(self, state) -> bool:
-        if state == 'start':
-            return False
-        else:
-            (thetaTarget, thetaLast) = state
-            # return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
-            #     self.distEpsilon, self.angleEpsilon)
-            return abs(thetaTarget - thetaLast) < self.angleEpsilon
+# the def Done() now using the superclass RotateTSM
