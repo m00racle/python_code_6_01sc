@@ -13,7 +13,7 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = spec.TestRotateForward(robot)
+robot_spec = spec.RotateTSM3(robot, -3/2*pi)
 # brai options:
 verbose_ = True
 cheat_ = False

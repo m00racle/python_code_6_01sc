@@ -69,6 +69,7 @@ class PioneerMod(PioneerRobot):
         """  
         Transform odometry based on the changes of pose before and after the superclass updates:
         """
+        # ======= POSE (GPS) based odometry ===================
         # start_pose = self.pose
         # super().on_step(duration)
         # od_x = self.pose.x - start_pose.x
@@ -76,6 +77,9 @@ class PioneerMod(PioneerRobot):
         # od_t = self.pose.t - start_pose.t
         # newOdo = self.odometry.transform((od_x, od_y, od_t))
         # self.odometry = newOdo
+        # =========uncomment to this and comment the other to use GPS based odometry
+
+        # ======== manual sensor odometry ============================================
         theta = self.odometry[2]
         d_t = self.rv * duration
         new_theta = theta + d_t
@@ -87,3 +91,4 @@ class PioneerMod(PioneerRobot):
         new_odo = self.odometry.transform((d_x, d_y, d_t))
         self.odometry = new_odo
         super().on_step(duration)
+        # ===== uncomment above and comment the other to use manual sensor odometry
