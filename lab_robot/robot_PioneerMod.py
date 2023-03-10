@@ -2,7 +2,7 @@
 Modify Pioneer Robot
 """
 from soar.robot.pioneer import PioneerRobot
-from math import sqrt
+from math import sqrt, pi, sin, cos
 from soar.sim.geometry import normalize_angle_180
 
 # create class odometry to circumvent the Pose challenge:
@@ -34,7 +34,7 @@ class Odometry:
         given tuple of (x, y, t)
         returns: Odometry 
         """
-        return Odometry(self.x + other[0], self.y + other[1], self.t + other[2])
+        return Odometry(self.x + other[0], self.y + other[1], (self.t + other[2]) % (2.0*pi))
 
     def is_near(self, other: tuple , dist_eps: float, angle_eps: float)->bool:
         """  
@@ -69,10 +69,21 @@ class PioneerMod(PioneerRobot):
         """  
         Transform odometry based on the changes of pose before and after the superclass updates:
         """
-        start_pose = self.pose
+        # start_pose = self.pose
+        # super().on_step(duration)
+        # od_x = self.pose.x - start_pose.x
+        # od_y = self.pose.y - start_pose.y
+        # od_t = self.pose.t - start_pose.t
+        # newOdo = self.odometry.transform((od_x, od_y, od_t))
+        # self.odometry = newOdo
+        theta = self.odometry[2]
+        d_t = self.rv * duration
+        new_theta = theta + d_t
+        if self.rv != 0:
+            d_x = self.fv * (sin(new_theta) - sin(theta))/self.rv
+            d_y = self.fv * (cos(theta) - cos(new_theta))/self.rv
+        else:
+            d_x, d_y = self.fv * cos(theta) * duration, self.fv * sin(theta) * duration
+        new_odo = self.odometry.transform((d_x, d_y, d_t))
+        self.odometry = new_odo
         super().on_step(duration)
-        od_x = self.pose.x - start_pose.x
-        od_y = self.pose.y - start_pose.y
-        od_t = self.pose.t - start_pose.t
-        newOdo = self.odometry.transform((od_x, od_y, od_t))
-        self.odometry = newOdo
