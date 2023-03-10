@@ -65,21 +65,32 @@ class RotateTSM(RobotSM):
             return self.robot.odometry.is_near((self.robot.odometry.x, self.robot.odometry.y, thetaTarget),\
                 self.distEpsilon, self.angleEpsilon)
 
-class RotateTSM2(RotateTSM):
+class RotateTSM3(RotateTSM):
     """  
-    TODO: 
-    Change this machine so that it rotates through an angle,
-    so you could give it 2 pi or minus 2 pi to have it rotate all the way around
+    Using nudge principle and norm 360 to create full rotate.
     """
     def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
         if self.done(state): return (state, io.Action(self.robot))
         currentTheta = inp.odometry.t
         if state == "start":
-            # set the target theta
-            thetaTarget = (currentTheta + self.deltaHeading)
+            thetaTarget = normalize_angle_180(currentTheta + self.deltaHeading)
+            if abs(thetaTarget) < self.angleEpsilon :
+                # nudge it
+                print('nudge')
+                if self.deltaHeading < 0:
+                    thetaTarget = normalize_angle_180(thetaTarget + self.angleEpsilon)
+                else:
+                    thetaTarget = normalize_angle_180(thetaTarget - self.angleEpsilon)
+            print(f'normalized theta target: {thetaTarget}')
         else:
             (thetaTarget, thetaLast) = state
         newState = (thetaTarget, currentTheta)
-        action = io.Action(self.robot, rvel= self.rotationalGain * (thetaTarget - currentTheta))
+        # determine speed:
+        # speed is depending on which way the self.headingdelta is:
+        speed = (normalize_angle_180(thetaTarget - currentTheta))
+        if self.deltaHeading > 0 and speed < 0:
+            speed = -speed
+        if self.deltaHeading < 0 and speed > 0:
+            speed = -speed
+        action = io.Action(self.robot, rvel= self.rotationalGain * speed)
         return (newState, action)
-# the def Done() now using the superclass RotateTSM
