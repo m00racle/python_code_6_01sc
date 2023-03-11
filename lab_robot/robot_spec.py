@@ -13,8 +13,7 @@ from soar.sim.geometry import normalize_angle_180, normalize_angle_360
 # test robot just move forward.
 class TestForward(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
-        print(f"robot pose: {self.robot.pose}")
-        return (self.robot.odometry.x, io.Action(self.robot, fvel=1.0))
+        return (self.robot.pose, io.Action(self.robot, fvel=1.0))
 
 class TestRotateForward(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
@@ -28,7 +27,7 @@ class TestRotate(RobotSM):
     def getNextValues(self, state, inp, **kwargs) -> tuple:
         if self.done(state): return (self.robot.odometry.t, io.Action(self.robot, rvel=0))
         theta = self.robot.odometry.t
-        return (theta, io.Action(self.robot, rvel=self.speed))
+        return (self.robot.pose, io.Action(self.robot, rvel=self.speed))
 
 class RotateTSM(RobotSM):
     def __init__(self, robot: PioneerMod, deltaHeading:float, initVal='start') -> None:
