@@ -79,7 +79,7 @@ class RobotSM:
         """
         return self.transduce([None] * n, verbose)
 
-    def getNextValues(self, state, inp, **kwargs)->tuple:
+    def getNextValues(self, state, inp:io.SensorInput, **kwargs)->tuple:
         """  
         returns : tuple -> (next state, output)
         this is supposed to be abstract function which must be defined in sub class
