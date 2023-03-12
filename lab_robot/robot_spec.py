@@ -86,3 +86,37 @@ class RotateTSM3(RotateTSM):
             speed = -speed
         action = io.Action(self.robot, rvel= self.rotationalGain * speed)
         return (newState, action)
+
+class ForwardTSM(RobotSM):
+    """  
+    Robot SM for forward to specific distance 
+    The measurement here in distance based.
+    """
+    def __init__(self, robot: PioneerMod, delta:float, initVal='start') -> None:
+        self.forwardGain = 1.0
+        self.distTargetEpsilon = 0.01
+        self.deltaDesired = delta
+        super().__init__(robot, initVal)
+
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        # if done robot stays put: (waiting for the next command)
+        if self.done(state): return (state, io.Action(self.robot))
+        # get current x,y coordinate position:
+        currentPos = inp.odometry.point()
+        if state == 'start':
+            print(f'Starting forward {self.deltaDesired}')
+            startPos = currentPos
+        else:
+            (startPos, lastPos) = state
+        newState = (startPos, currentPos)
+        diff = self.deltaDesired - startPos.distance(currentPos)
+        velocity = self.forwardGain * diff
+        action = io.Action(self.robot, fvel=velocity)
+        return (newState, action)
+
+    def done(self, state) -> bool:
+        if state == 'start':
+            return False
+        else:
+            starPos, lastPos = state
+            return abs(self.deltaDesired - starPos.distance(lastPos)) < self.distTargetEpsilon
