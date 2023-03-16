@@ -4,7 +4,8 @@ Robot Brain and controllers
 
 # from soar.robot.pioneer import PioneerRobot
 from robot_PioneerMod import PioneerMod
-import robot_spec as spec
+# import robot_spec as spec
+from robot_spec import *
 import robot_io as io
 from math import pi
 # set the the robot
@@ -13,7 +14,7 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = spec.ForwardTSM(robot, 2)
+robot_spec = Cascade(SpyroGyra(robot, 0.5), XYDriver(robot))
 # brai options:
 verbose_ = True
 cheat_ = False
