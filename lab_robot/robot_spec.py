@@ -120,3 +120,98 @@ class ForwardTSM(RobotSM):
         else:
             starPos, lastPos = state
             return abs(self.deltaDesired - starPos.distance(lastPos)) < self.distTargetEpsilon
+
+class XYDriver(RobotSM):
+    """  
+    set movement by Sensor inputs and goal points
+    """
+    def __init__(self, robot: PioneerMod, initVal='start') -> None:
+        self.robot = robot
+        self.forwardGain = 2.0
+        self.rotationGain = 2.0
+        self.angleEps = 0.05
+        self.distEps = 0.02
+        self.startState = False
+    
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (goalPoint, sensors) = inp
+        robotPose = sensors.odometry
+        # remember odometry is now Pose type:
+        robotPoint = robotPose.point()
+        # we can call the point to return Point(x, y) of the Robot.
+        # also we get to access the Point.angle_to function from Pose
+        robotTheta = robotPose.t
+
+        if goalPoint == None:
+            return (True, io.Action(self.robot))
+        
+        # set the heading to the intended point
+        headingTheta = robotPoint.angle_to(goalPoint)
+        
+        # rotate the robot to the goalPoint
+        if abs(normalize_angle_180(headingTheta - robotTheta)) > self.angleEps:
+            return (False, io.Action(self.robot, rvel=self.rotationGain * normalize_angle_180(headingTheta - robotTheta)))
+        # then move toward the goal point:
+        r = robotPoint.distance(goalPoint)
+        if r > self.distEps:
+            # moving toward the goal point:
+            return (False, io.Action(self.robot, fvel=self.forwardGain * r))
+        # oher than both then we will just stop
+        return (True, io.Action(self.robot))
+
+    def done(self, state) -> bool:
+        return state
+
+class SpyroGyra(RobotSM):
+    """  
+    The class intended working with XYDriver class to create spiral running robot
+    """
+    def __init__(self, robot: PioneerMod, incr:float, initVal='start') -> None:
+        self.robot = robot
+        self.distEps = 0.02
+        self.incr = incr
+        self.startState = ('east', 0, None)
+
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        (direction, length, subGoal) = state
+        robotPose = inp.odometry
+        robotPoint = robotPose.point()
+        
+        if subGoal == None :
+            subGoal = robotPoint
+        
+        if robotPoint.is_near(subGoal, self.distEps):
+            # change the stte
+            length = length + self.incr
+            
+            if direction == 'east':
+                direction = 'north'
+                subGoal.y += length
+            elif direction == 'north':
+                direction = 'west'
+                subGoal.x -= length
+            elif direction == 'west':
+                direction = 'south'
+                subGoal.y -= length
+            else: # south
+                direction = 'east'
+                subGoal.x += length
+            print(f'new: {direction}, {length}, {subGoal}')
+        
+        return ((direction, length, subGoal), (subGoal, inp))
+
+class Cascade(RobotSM):
+    """  
+    Cascade class similar to the SM but for robot
+    """
+    def __init__(self, m1 : RobotSM, m2: RobotSM) -> None:
+        self.m1 = m1
+        self.m2 = m2
+        self.log = {}
+        self.startState = (m1.startState, m2.startState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        (s1, s2) = state
+        (next_s1, o1) = self.m1.getNextValues(s1, inp)
+        (next_s2, o2) = self.m2.getNextValues(s2, o1)
+        return ((next_s1, next_s2), o2)
