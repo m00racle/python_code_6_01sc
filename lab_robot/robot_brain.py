@@ -14,7 +14,7 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = Cascade(SpyroGyra(robot, 0.5), XYDriver(robot))
+robot_spec = TestRotate(robot, pi)
 # brai options:
 verbose_ = True
 cheat_ = False
