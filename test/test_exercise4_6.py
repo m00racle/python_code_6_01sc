@@ -18,7 +18,7 @@ class TestExercise4_6(unittest.TestCase):
         self.assertEqual(Exercise1b().transduce(self.inputs), self.expected)
 
     def test_exercise_4_6_1_C(self):
-        newSM = Repeat(Exercise1cHelper, 3)
+        newSM = Repeat(Exercise1cHelper(), 3)
         self.assertEqual(newSM.transduce(self.inputs), self.expected)
     
     def test_exercise_4_6_2_a(self):

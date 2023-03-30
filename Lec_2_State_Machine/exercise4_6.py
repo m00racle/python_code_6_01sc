@@ -4,12 +4,35 @@ class Exercise1b(SM):
     """  
     generate outputs every 3 steps read Exercise 4-6-1 B
     """
+    def __init__(self, initVal=0) -> None:
+        self.startState = (0,0) # this state represent the x and y
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        x, y = state
+        y += inp
+        if y > 100:
+            # reset y and increment x
+            return ((x + 1, 0), y)
+        return ((x,y), y)
+
+    def done(self, state) -> bool:
+        x, y = state
+        return x >= 3
+
 
 class Exercise1cHelper(SM):
     """  
     combine this class with sm.Repeat 
     to solve the Exercise 4-6-1 C
     """
+    def __init__(self, initVal=0) -> None:
+        self.startState = 0 # only represent y
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        return (state + inp, state + inp)
+    
+    def done(self, state) -> bool:
+        return state > 100
 
 # Exercise 4-6-2 
 class CountingStateMachine(SM):
