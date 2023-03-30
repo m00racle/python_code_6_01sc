@@ -6,7 +6,7 @@ code_dir = os.path.normpath(test_dir + "/../Lec_2_State_Machine")
 
 sys.path.append(code_dir)
 
-from exercise4_6 import Exercise1b, Exercise1cHelper
+from exercise4_6 import Exercise1b, Exercise1cHelper, CountMod5, AlternateZeros
 from state_machine import Repeat
 
 class TestExercise4_6(unittest.TestCase):
@@ -20,3 +20,13 @@ class TestExercise4_6(unittest.TestCase):
     def test_exercise_4_6_1_C(self):
         newSM = Repeat(Exercise1cHelper, 3)
         self.assertEqual(newSM.transduce(self.inputs), self.expected)
+    
+    def test_exercise_4_6_2_a(self):
+        cm = CountMod5()
+        res = cm.run()
+        self.assertEqual(res, [0, 1, 2, 3, 4, 0, 1, 2, 3, 4])
+
+    def test_exercise_4_6_2_b(self):
+        am = AlternateZeros()
+        resb = am.run()
+        self.assertEqual(resb, [None, 0, None, 0, None, 0, None, 0, None, 0])
