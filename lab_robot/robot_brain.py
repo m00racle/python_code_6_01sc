@@ -14,7 +14,7 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = TestRotate(robot, pi)
+robot_spec = FollowBound(robot)
 # brai options:
 verbose_ = True
 cheat_ = False

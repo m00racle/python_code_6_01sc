@@ -215,3 +215,72 @@ class Cascade(RobotSM):
         (next_s1, o1) = self.m1.getNextValues(s1, inp)
         (next_s2, o2) = self.m2.getNextValues(s2, o1)
         return ((next_s1, next_s2), o2)
+    
+class FollowBound(RobotSM):
+    """  
+    Design lab 2: Controlling Robots
+    4. Following Boundaries
+    -- when there is nothing nearby, move forward
+    -- as soon as it reaches obstacles in front i should follow the boundary
+    ROBOT MUST BE between 0.3 to 0.5 from the side.
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        curState = state
+        sonar3 = inp.sonars[3]
+        sonar4 = inp.sonars[4]
+        sonar3 = sonar3 if sonar3 != None else 1.5
+        sonar4 = sonar4 if sonar4 != None else 1.5
+        avgSonar = (sonar4 + sonar3)/2
+        theta = inp.odometry.t
+
+        # gains
+        fGain = 1
+        rGain = 2
+        if curState == 'start':
+            # move forward
+            rv = 0
+            fv = (avgSonar - 0.4)*fGain
+            
+            if avgSonar < 0.5 :
+                
+                if theta < 0.02 and theta > -0.02:
+                    nextState = 'east'
+                elif theta < pi/2 + 0.02 and theta > pi/2 - 0.02:
+                    nextState = 'north'
+                elif theta < pi + 0.02 and theta > pi - 0.02:
+                    nextState = 'west'
+                else:
+                    nextState = 'south'
+            else:
+                nextState = 'start'
+        elif curState == 'east':
+            fv = 0
+            rv = rGain * (pi/2 - theta)
+            if theta < pi/2 + 0.02 and theta > pi/2 - 0.02:
+                nextState = 'start'
+            else:
+                nextState = 'east'
+
+        elif curState == 'north':
+            fv = 0
+            rv = rGain * (pi - theta)
+            if theta < pi + 0.02 and theta > pi - 0.02:
+                nextState = 'start'
+            else:
+                nextState = 'north'
+
+        elif curState == 'west':
+            fv = 0
+            rv = rGain * (3*pi/2 - theta)
+            if theta < 3*pi/2 + 0.02 and theta > 3*pi/2 - 0.02:
+                nextState = 'start'
+            else:
+                nextState = 'west'
+        else:
+            fv = 0
+            rv = rGain * (2*pi - theta)
+            if theta < 2*pi + 0.02 and theta > 2*pi - 0.02:
+                nextState = 'start'
+            else:
+                nextState = 'south' 
+        return (nextState, io.Action(self.robot, fvel = fv, rvel = rv))
