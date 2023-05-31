@@ -278,7 +278,7 @@ class FollowBound(RobotSM):
                 nextState = 'west'
         else:
             fv = 0
-            rv = rGain * (2*pi - theta) if theta < 2*pi else 0
+            rv = rGain * (2*pi - theta) if theta < 2*pi and theta > 2*pi/3 - 0.02 else -0.02
             if (theta <  0.02 and theta > 0) or (theta > 2*pi - 0.02 and theta < 2*pi):
                 nextState = 'start'
             else:
