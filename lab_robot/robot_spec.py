@@ -231,7 +231,7 @@ class FollowBound(RobotSM):
         sonar3 = sonar3 if sonar3 != None else 1.5
         sonar4 = sonar4 if sonar4 != None else 1.5
         avgSonar = (sonar4 + sonar3)/2
-        theta = inp.odometry.t
+        theta = (inp.odometry.t)%(2*pi)
 
         # gains
         fGain = 1
@@ -243,7 +243,7 @@ class FollowBound(RobotSM):
             
             if avgSonar < 0.5 :
                 
-                if theta < 0.02 and theta > -0.02:
+                if (theta < 0.02 and theta >= 0.0) or (theta < 2*pi and theta > 2*pi - 0.02):
                     nextState = 'east'
                 elif theta < pi/2 + 0.02 and theta > pi/2 - 0.02:
                     nextState = 'north'
@@ -278,8 +278,8 @@ class FollowBound(RobotSM):
                 nextState = 'west'
         else:
             fv = 0
-            rv = rGain * (2*pi - theta)
-            if theta < 2*pi + 0.02 and theta > 2*pi - 0.02:
+            rv = rGain * (2*pi - theta) if theta < 2*pi else 0
+            if (theta <  0.02 and theta > 0) or (theta > 2*pi - 0.02 and theta < 2*pi):
                 nextState = 'start'
             else:
                 nextState = 'south' 
