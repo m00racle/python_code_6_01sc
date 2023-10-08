@@ -1,4 +1,11 @@
-import os, sys, unittest, io
+"""  
+test for cascade SM code
+"""
+import os
+import sys
+import unittest
+import cascade as c
+from state_machine import Delay, Increment
 
 # set the code and test dir
 test_dir = os.path.dirname(__file__)
@@ -6,8 +13,7 @@ code_dir = os.path.normpath(test_dir + "/../Lec_2_State_Machine")
 
 sys.path.append(code_dir)
 
-import cascade as c
-from state_machine import Delay, Increment
+
 
 class TestCascasdeClass(unittest.TestCase):
     """  
@@ -15,6 +21,9 @@ class TestCascasdeClass(unittest.TestCase):
     """
 
     def test_cascading_two_delay_state_machines(self):
+        """  
+        testing two Delay SMs arrange in cascade as one SM
+        """
         # arrange:
         m1 = Delay(99)
         m2 = Delay(22)
@@ -26,6 +35,9 @@ class TestCascasdeClass(unittest.TestCase):
         self.assertEqual(casc.transduce(inputs), expected_outputs)
 
     def test_cascading_increment_delay_state_machines(self):
+        """  
+        Based on module exercise on State Machine
+        """
         # arrange
         # Increment state machine with increment 2 for each inputs
         i = Increment(2)
@@ -56,6 +68,10 @@ class TestIncrementClass(unittest.TestCase):
         self.assertEqual(inc.transduce(inputs), expected_outputs)
         
     def test_increment_non_numbers(self):
+        """  
+        Test handling non numbers 
+        When the input is non numbers it must output None
+        """
         inputs = [2.2, True, None, 'a', 9]
         k = 2.5
         expected_outputs = [4.7, None, None, None, 11.5]
