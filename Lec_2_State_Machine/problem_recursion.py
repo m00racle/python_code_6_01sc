@@ -24,19 +24,14 @@ def sub(a,b):
 
 def slowMod(a,b):
     """  
-        combination of using add and sub function to calculate mod
+        combination of using recursive sub function to calculate mod
         a = positive integer
         b = positive integer
         return integer = a % b
     """
+    if b == a : return 0
     if b > a : return a
-    count = b
-    while count <= a:
-        check = add(count,b)
-        if check > a : break
-        count = check
-    
-    return sub(a, count)
+    return slowMod(sub(a,b), b)
 
 # run main
 print(f"add(5,2) = {add(5,2)}")
