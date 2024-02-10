@@ -2,10 +2,10 @@
     Special file to test the import statement
 """
 
-import state_machine as sm
+from state_machine import Accumulator
 
 def test_run():
-    acc = sm.Accumulator()
+    acc = Accumulator(10)
     test_res = acc.transduce([1,2,3,4,5])
     print(f"test result: {test_res}")
 
