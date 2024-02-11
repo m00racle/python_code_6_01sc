@@ -2,6 +2,14 @@
     Special file to test the import statement
 """
 
+import os, sys
+# setup the path
+current_path = os.path.dirname(__file__)
+package_path = os.path.normpath(current_path + '/../Lec_2_State_Machine')
+
+sys.path.append(package_path)
+
+# import all packages needed:
 from state_machine import Accumulator
 
 def test_run():
