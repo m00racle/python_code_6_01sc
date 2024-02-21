@@ -168,3 +168,6 @@ cython_debug/
 # Repl.it
 .replit
 replit.nix
+
+# drawio backups
+*.drawio.bkp
