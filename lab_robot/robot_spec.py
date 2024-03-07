@@ -241,6 +241,34 @@ class Parallel(RobotSM):
         (next_s2, o2) = self.m2.getNextValues(s2, inp)
         return ((next_s1, next_s2), (o1, o2))
     
+class Constant(RobotSM):
+    """  
+    Equivalent for class Fixed in SM -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L455
+
+    but this one is for robot
+    """
+    def __init__(self, robot: PioneerMod, k, initVal='start') -> None:
+        super().__init__(robot, initVal)
+        # NOTE: k here is constant can be anything including Point object
+        self.k = k
+    
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        always return state and constant -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L466
+
+        """
+        return (state, self.k)
+    
+class Wire(RobotSM):
+    """  
+    Equivalent to SM Wire -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L441
+    but for robot
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        output always satate and input
+        """
+        return (state, inp)
     
 class FollowBound(RobotSM):
     """  
