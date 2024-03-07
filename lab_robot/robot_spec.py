@@ -8,7 +8,7 @@ from robot_sm import RobotSM
 import robot_io as io
 from math import pi
 from robot_PioneerMod import PioneerMod
-from soar.sim.geometry import normalize_angle_180, normalize_angle_360
+from soar.sim.geometry import normalize_angle_180, normalize_angle_360, Point
 
 # test robot just move forward.
 class TestForward(RobotSM):
@@ -338,3 +338,22 @@ class FollowBound(RobotSM):
             else:
                 nextState = 'south' 
         return (nextState, io.Action(self.robot, fvel = fv, rvel = rv))
+    
+
+"""  
+Design Lab 3 Specs
+reference see: https://ocw.mit.edu/courses/6-01sc-introduction-to-electrical-engineering-and-computer-science-i-spring-2011/resources/mit6_01scs11_designlab03/
+
+"""
+
+class GoalGenerator(Constant):
+    """  
+    GoalGenerator SM basically is a Constant State Machine
+    """
+    def __init__(self, robot: PioneerMod, k:Point, initVal='start') -> None:
+        super().__init__(robot, k, initVal)
+
+class DynamicMoveToPoint(XYDriver):
+    """  
+    This is basically XYDriver class
+    """

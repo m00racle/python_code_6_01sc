@@ -8,13 +8,14 @@ from robot_PioneerMod import PioneerMod
 from robot_spec import *
 import robot_io as io
 from math import pi
+from soar.sim.geometry import Point
 # set the the robot
 robot = PioneerMod()
 
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = FollowBound(robot)
+robot_spec = Cascade(Parallel(GoalGenerator(robot, Point(1.0, 0.5)), Wire(robot)), DynamicMoveToPoint(robot))
 # brai options:
 verbose_ = True
 cheat_ = False
