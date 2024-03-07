@@ -216,6 +216,32 @@ class Cascade(RobotSM):
         (next_s2, o2) = self.m2.getNextValues(s2, o1)
         return ((next_s1, next_s2), o2)
     
+class Parallel(RobotSM):
+    """  
+    Parallel class for Robot
+    """
+    def __init__(self, m1: RobotSM, m2: RobotSM) -> None:
+        """  
+        initialize:
+        m1 : RobotSM = robot state machine
+        m2 : RobotSM = robot state machine
+        """
+        self.m1 = m1
+        self.m2 = m2
+        self.startState = (m1.startState, m2.startState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        """  
+        Parallel settings -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/parallel.py#L31
+
+        Return: tuple = next states and outputs
+        """
+        (s1, s2) = state
+        (next_s1, o1) = self.m1.getNextValues(s1, inp)
+        (next_s2, o2) = self.m2.getNextValues(s2, inp)
+        return ((next_s1, next_s2), (o1, o2))
+    
+    
 class FollowBound(RobotSM):
     """  
     Design lab 2: Controlling Robots
