@@ -357,3 +357,31 @@ class DynamicMoveToPoint(XYDriver):
     """  
     This is basically XYDriver class
     """
+
+class FollowFigure(Constant):
+    """  
+    Follow Figure means the constant is a list of Point(s)
+    """
+    def __init__(self, robot: PioneerMod, k:list, initVal='start') -> None:
+        # add epsilon to match the DynamicMoveToPoint test
+        self.distEps = 0.02
+        # set index on the k list
+        self.i = 0
+        super().__init__(robot, k, initVal)
+
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        when there still Point in the list of Point in k then return the point
+        if the point is reached
+        """
+        # if inp.odometry.point().distance(self.k[self.i]) > self.distEps:
+        #     return (state, self.k[self.i])
+        # elif self.i + 1 < len(self.k):
+        #     self.i = self.i + 1
+        
+        # alternative form of above statement:
+        # if the robot position Point close enough to target and there still next target Point in k list
+        # then index will be incremented by 1:
+        if inp.odometry.point().distance(self.k[self.i]) <= self.distEps and self.i + 1 < len(self.k):
+            self.i = self.i + 1
+        return (state, self.k[self.i])

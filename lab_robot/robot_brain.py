@@ -15,8 +15,9 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-robot_spec = Cascade(Parallel(GoalGenerator(robot, Point(1.0, 0.5)), Wire(robot)), DynamicMoveToPoint(robot))
-# brai options:
+squarePoints = [Point(0.5, 0.5), Point(0.0, 1.0), Point(-0.5, 0.5), Point(0.0, 0.0)]
+robot_spec = Cascade(Parallel(FollowFigure(robot, squarePoints), Wire(robot)), DynamicMoveToPoint(robot))
+# brain options:
 verbose_ = True
 cheat_ = False
 
