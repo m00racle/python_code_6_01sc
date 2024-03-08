@@ -8,7 +8,7 @@ from robot_sm import RobotSM
 import robot_io as io
 from math import pi
 from robot_PioneerMod import PioneerMod
-from soar.sim.geometry import normalize_angle_180, normalize_angle_360
+from soar.sim.geometry import normalize_angle_180, normalize_angle_360, Point
 
 # test robot just move forward.
 class TestForward(RobotSM):
@@ -216,6 +216,87 @@ class Cascade(RobotSM):
         (next_s2, o2) = self.m2.getNextValues(s2, o1)
         return ((next_s1, next_s2), o2)
     
+class Parallel(RobotSM):
+    """  
+    Parallel class for Robot
+    """
+    def __init__(self, m1: RobotSM, m2: RobotSM) -> None:
+        """  
+        initialize:
+        m1 : RobotSM = robot state machine
+        m2 : RobotSM = robot state machine
+        """
+        self.m1 = m1
+        self.m2 = m2
+        self.startState = (m1.startState, m2.startState)
+
+    def getNextValues(self, state, inp, **kwargs) -> tuple:
+        """  
+        Parallel settings -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/parallel.py#L31
+
+        Return: tuple = next states and outputs
+        """
+        (s1, s2) = state
+        (next_s1, o1) = self.m1.getNextValues(s1, inp)
+        (next_s2, o2) = self.m2.getNextValues(s2, inp)
+        return ((next_s1, next_s2), (o1, o2))
+    
+class Constant(RobotSM):
+    """  
+    Equivalent for class Fixed in SM -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L455
+
+    but this one is for robot
+    """
+    def __init__(self, robot: PioneerMod, k, initVal='start') -> None:
+        super().__init__(robot, initVal)
+        # NOTE: k here is constant can be anything including Point object
+        self.k = k
+    
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        always return state and constant -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L466
+
+        """
+        return (state, self.k)
+    
+class Wire(RobotSM):
+    """  
+    Equivalent to SM Wire -> see https://github.com/m00racle/python_code_6_01sc/blob/b8e20b14023a533bfcb68faaa3645150ad644933/Lec_2_State_Machine/state_machine.py#L441
+    but for robot
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        output always satate and input
+        """
+        return (state, inp)
+    
+class Switch(RobotSM):
+    """  
+    Switch between 2 SM depending on condition test
+    """
+    def __init__(self, condition, sm1:RobotSM, sm2:RobotSM) -> None:
+        """  
+        Given:
+            condition : function/lambda = function given inp (io.SensorInput) return boolean
+            sm1 : RobotSM = robot sm
+            sm2 : RobotSM = robot sm
+        set initial condition of the state machine
+        set condition
+        """
+        self.condition = condition
+        self.sm1 = sm1
+        self.sm2 = sm2
+        self.startState = (sm1.startState, sm2.startState)
+        
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        (s1, s2) = state
+        if self.condition(inp):
+            (ns1, o) = self.sm1.getNextValues(s1, inp)
+            return ((ns1, s2), o)
+        else:
+            (ns2, o) = self.sm2.getNextValues(s2, inp)
+            return ((s1, ns2), o)
+    
 class FollowBound(RobotSM):
     """  
     Design lab 2: Controlling Robots
@@ -284,3 +365,58 @@ class FollowBound(RobotSM):
             else:
                 nextState = 'south' 
         return (nextState, io.Action(self.robot, fvel = fv, rvel = rv))
+    
+
+"""  
+Design Lab 3 Specs
+reference see: https://ocw.mit.edu/courses/6-01sc-introduction-to-electrical-engineering-and-computer-science-i-spring-2011/resources/mit6_01scs11_designlab03/
+
+"""
+
+class GoalGenerator(Constant):
+    """  
+    GoalGenerator SM basically is a Constant State Machine
+    """
+    def __init__(self, robot: PioneerMod, k:Point, initVal='start') -> None:
+        super().__init__(robot, k, initVal)
+
+class DynamicMoveToPoint(XYDriver):
+    """  
+    This is basically XYDriver class
+    """
+
+class Brake(RobotSM):
+    """  
+    stop the robot movement
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        # return io.Action(self.robot) without fvel and rvel will make the robot stop
+        return (state, io.Action(self.robot))
+
+class FollowFigure(Constant):
+    """  
+    Follow Figure means the constant is a list of Point(s)
+    """
+    def __init__(self, robot: PioneerMod, k:list, initVal='start') -> None:
+        # add epsilon to match the DynamicMoveToPoint test
+        self.distEps = 0.02
+        # set index on the k list
+        self.i = 0
+        super().__init__(robot, k, initVal)
+
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        """  
+        when there still Point in the list of Point in k then return the point
+        if the point is reached
+        """
+        # if inp.odometry.point().distance(self.k[self.i]) > self.distEps:
+        #     return (state, self.k[self.i])
+        # elif self.i + 1 < len(self.k):
+        #     self.i = self.i + 1
+        
+        # alternative form of above statement:
+        # if the robot position Point close enough to target and there still next target Point in k list
+        # then index will be incremented by 1:
+        if inp.odometry.point().distance(self.k[self.i]) <= self.distEps and self.i + 1 < len(self.k):
+            self.i = self.i + 1
+        return (state, self.k[self.i])
