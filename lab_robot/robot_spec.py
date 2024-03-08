@@ -270,6 +270,33 @@ class Wire(RobotSM):
         """
         return (state, inp)
     
+class Switch(RobotSM):
+    """  
+    Switch between 2 SM depending on condition test
+    """
+    def __init__(self, condition, sm1:RobotSM, sm2:RobotSM) -> None:
+        """  
+        Given:
+            condition : function/lambda = function given inp (io.SensorInput) return boolean
+            sm1 : RobotSM = robot sm
+            sm2 : RobotSM = robot sm
+        set initial condition of the state machine
+        set condition
+        """
+        self.condition = condition
+        self.sm1 = sm1
+        self.sm2 = sm2
+        self.startState = (sm1.startState, sm2.startState)
+        
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        (s1, s2) = state
+        if self.condition(inp):
+            (ns1, o) = self.sm1.getNextValues(s1, inp)
+            return ((ns1, s2), o)
+        else:
+            (ns2, o) = self.sm2.getNextValues(s2, inp)
+            return ((s1, ns2), o)
+    
 class FollowBound(RobotSM):
     """  
     Design lab 2: Controlling Robots
@@ -357,6 +384,14 @@ class DynamicMoveToPoint(XYDriver):
     """  
     This is basically XYDriver class
     """
+
+class Brake(RobotSM):
+    """  
+    stop the robot movement
+    """
+    def getNextValues(self, state, inp: io.SensorInput, **kwargs) -> tuple:
+        # return io.Action(self.robot) without fvel and rvel will make the robot stop
+        return (state, io.Action(self.robot))
 
 class FollowFigure(Constant):
     """  
