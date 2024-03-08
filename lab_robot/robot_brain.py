@@ -15,7 +15,7 @@ robot = PioneerMod()
 
 # specify the robot spec:
 # put robot_spec and its init arguments
-squarePoints = [Point(0.5, 0.5), Point(0.0, 1.0), Point(-0.5, 0.5), Point(0.0, 0.0)]
+squarePoints = [Point(1.5, -3.0), Point(3.5, -1.0), Point(6.0, -3.5), Point(7.0, 0.0)]
 robot_spec = Cascade(Parallel(FollowFigure(robot, squarePoints), Wire(robot)), DynamicMoveToPoint(robot))
 # brain options:
 verbose_ = True
